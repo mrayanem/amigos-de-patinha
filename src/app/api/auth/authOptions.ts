@@ -21,7 +21,6 @@ export const nextAuthOptions: NextAuthOptions = {
         email: { label: 'email', type: 'email' },
         password: { label: 'password', type: 'password' },
       },
-
       async authorize(credentials) {
         const { email, password } = credentials as TAuth
 
@@ -30,7 +29,7 @@ export const nextAuthOptions: NextAuthOptions = {
             .post<TAuthResponse>('/auth', { email, password })
             .then(({ data }) => data.data)
 
-          return user
+          return user || null
         } catch (err) {
           console.log(err)
           return null

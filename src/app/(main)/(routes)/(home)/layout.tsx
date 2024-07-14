@@ -7,6 +7,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  console.log('oi')
   return (
     <html lang="pt-br" className="scroll-smooth">
       <body style={{ fontFamily: 'Poppins, sans-serif' }}>

@@ -9,5 +9,5 @@ export type CreateUser = {
   password: string
   city: string
   state: string
-  telephone: number
+  telephone?: number | null
 }
