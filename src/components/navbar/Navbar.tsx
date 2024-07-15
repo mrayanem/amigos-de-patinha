@@ -1,17 +1,69 @@
 'use client'
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { Button } from '../ui/button'
 import { Backlinks } from '@/constants'
-// import { ModalContactForm } from '../contact/ModalContactForm'
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import { Menu } from 'lucide-react'
+import { Menu, User } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 
 export function Navbar() {
   const pathname = usePathname()
+  const { data: session, status } = useSession()
+
+  // Function to render user menu based on session status
+  const renderUserMenu = () => {
+    if (session && status === 'authenticated') {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger className="rounded-full border-none bg-[#01377D] p-2 text-white">
+            <User className="h-[25px] w-[25px] text-white" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem>Cadastrar animal</DropdownMenuItem>
+            <DropdownMenuItem>Conta</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Editar perfil</DropdownMenuItem>
+            <DropdownMenuItem>Alterar senha</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Sair</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    } else {
+      return (
+        <>
+          <Button
+            asChild={true}
+            className={
+              'bg-transparent text-base font-medium text-black hover:text-zinc-500'
+            }
+          >
+            <Link href="/login">Login</Link>
+          </Button>
+          <Button
+            asChild={true}
+            className={
+              'rounded-full bg-[#01377D] text-base font-semibold text-white shadow shadow-[#009DD0] transition-all hover:bg-[#084390]'
+            }
+          >
+            <Link href="/cadastro">Cadastre-se</Link>
+          </Button>
+        </>
+      )
+    }
+  }
 
   return (
     <div
@@ -45,35 +97,7 @@ export function Navbar() {
           ))}
         </div>
         <div className="flex items-center justify-end">
-          <div className="hidden md:flex">
-            <Button
-              asChild={true}
-              className={
-                'bg-transparent text-base font-medium text-black hover:text-zinc-500'
-              }
-            >
-              <a href="/login">Login</a>
-            </Button>
-            <Button
-              asChild={true}
-              className={
-                'rounded-full bg-[#01377D] text-base font-semibold text-white shadow shadow-[#009DD0] transition-all hover:bg-[#084390]'
-              }
-            >
-              <a href="/cadastro">Cadastre-se</a>
-            </Button>
-          </div>
-          {/* <ModalContactForm
-            trigger={
-              <Button
-                className={
-                  'ml-4 hidden w-[140px] rounded-3xl border-2 bg-transparent lg:inline-block '
-                }
-              >
-                Get In touch
-              </Button>
-            }
-          /> */}
+          <div className="hidden md:flex">{renderUserMenu()}</div>
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -100,24 +124,7 @@ export function Navbar() {
                     <Link href={link.url}>{link.title}</Link>
                   </Button>
                 ))}
-                <div className="flex flex-col items-start justify-start">
-                  <Button
-                    asChild={true}
-                    className={
-                      'bg-transparent text-base font-medium text-black hover:text-zinc-500'
-                    }
-                  >
-                    <a href="/login">Login</a>
-                  </Button>
-                  <Button
-                    asChild={true}
-                    className={
-                      'bg-transparent text-base font-medium text-black hover:text-zinc-500'
-                    }
-                  >
-                    <a href="/cadastro">Cadastre-se</a>
-                  </Button>
-                </div>
+                {renderUserMenu()}
               </div>
             </SheetContent>
           </Sheet>
