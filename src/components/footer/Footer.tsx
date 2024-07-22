@@ -25,7 +25,7 @@ export default function Footer() {
               <div className="lg:row ml-2 mt-4 justify-between lg:flex">
                 <div className="flex items-center justify-center md:justify-end">
                   <a
-                    href=""
+                    href="/TermosDeUso-PolíticaDePrivacidade.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-center text-sm text-white lg:text-right"
@@ -36,7 +36,7 @@ export default function Footer() {
                     |
                   </p>
                   <a
-                    href=""
+                    href="/TermosDeUso-PolíticaDePrivacidade.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-center text-sm text-white lg:text-right"
@@ -73,15 +73,6 @@ export default function Footer() {
               © 2024 Amigos de patinha. CNPJ. 44.444.444/0001-04 - AMIGOS DE
               PATINHA
             </p>
-            {/* <div className="mt-6 flex items-center justify-center md:mt-0 md:justify-end">
-              <Image
-                src="/"
-                className="h-6 object-contain sm:h-9"
-                alt="Flowbite Logo"
-                width={80}
-                height={32}
-              />
-            </div> */}
           </div>
         </div>
       </footer>

@@ -71,11 +71,11 @@
   scrollbar-width: none;
 }
 
-/* @layer utilities {
+@layer utilities {
   .grid-app {
-    grid-template-columns: minmax(18rem, 20rem) 1fr;
+    grid-template-columns: minmax(16rem, 18rem) 1fr;
   }
   .grid-profile {
     grid-template-columns: max-content 1fr min-content;
   }
-} */
+}
