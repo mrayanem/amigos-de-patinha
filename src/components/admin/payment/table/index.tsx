@@ -322,9 +322,9 @@ export default function PaymentTable() {
             }
             className="w-[251px] max-w-sm border border-[#E4E4E7] shadow-sm placeholder:text-[#71717A]"
           />
-          <Button className="flex items-center rounded-md border border-dashed border-[#E4E4E7] bg-white text-black shadow-sm">
+          {/* <Button className="flex items-center rounded-md border border-dashed border-[#E4E4E7] bg-white text-black shadow-sm">
             <PlusCircle size={14} className="mr-1" /> Status
-          </Button>
+          </Button> */}
         </div>
         <div className="grid-profile grid items-center gap-3 rounded-[16px] border border-[#E3E3E6] bg-white p-2 shadow-sm">
           <div className="flex h-[42px] w-[42px] items-center justify-center rounded-[12px] bg-[#F9F9F9]">
