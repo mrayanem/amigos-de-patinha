@@ -11,7 +11,7 @@ import { useRegister } from '@/client/auth'
 import { LockKeyhole, Mail, Loader2 } from 'lucide-react'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
+import { toast } from 'react-toastify'
 
 // Schema de validação do formulário
 const formSchema = z.object({

@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTransition } from 'react'
 import { Loader2, LockKeyhole, Mail, Phone } from 'lucide-react'
-import { toast } from 'sonner'
+import { toast } from 'react-toastify'
 import { useRegister } from '@/client/auth'
 import { useRouter } from 'next/navigation'
 
@@ -48,7 +48,7 @@ export default function SectionCadastro() {
         if (response?.error) {
           toast.error('Erro ao criar usuário')
         } else {
-          toast.success('Usuário criado com sucesso')
+          toast.success('Cadastro com sucesso! Você pode fazer login agora')
           form.reset()
           router.replace('/')
         }

@@ -16,7 +16,7 @@ import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Menu, User } from 'lucide-react'
-import { useSession } from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
 
 export function Navbar() {
   const pathname = usePathname()
@@ -37,7 +37,7 @@ export function Navbar() {
             <DropdownMenuItem>Editar perfil</DropdownMenuItem>
             <DropdownMenuItem>Alterar senha</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Sair</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => signOut()}>Sair</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
