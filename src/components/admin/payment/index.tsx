@@ -6,7 +6,7 @@ import {
   ColumnFiltersState,
   SortingState,
   VisibilityState,
-  flexRender,
+  // flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
+  // DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -41,7 +41,7 @@ import {
   MoreHorizontal,
   // PlusCircle,
 } from 'lucide-react'
-import PaymentTable from './table'
+import UsersTable from './table'
 
 const data: any[] = [
   {
@@ -68,15 +68,24 @@ const data: any[] = [
   // Adicione mais exemplos conforme necessário
 ]
 
-export type Payment = {
+// export type Animal = {
+//   id: string
+//   owner: string
+//   name: string
+//   // title: string
+//   status: 'disponível para adoção' | 'em processo de adoção' | 'adotado'
+//   // priority: 'low' | 'medium' | 'high'
+// }
+
+export type User = {
   id: string
-  task: string
-  title: string
-  status: 'pending' | 'processing' | 'success' | 'failed'
-  priority: 'low' | 'medium' | 'high'
+  name: string
+  animals: string
+  // status: 'disponível para adoção' | 'em processo de adoção' | 'adotado'
+  // priority: 'low' | 'medium' | 'high'
 }
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<User>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -194,7 +203,7 @@ export function DataTableDemo() {
         </div>
         <div className="my-4 h-[2px] w-full bg-zinc-100" />
 
-        <PaymentTable />
+        <UsersTable />
       </div>
     </section>
   )

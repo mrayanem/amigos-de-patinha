@@ -105,7 +105,7 @@ const statusData = {
   canceled: <XCircle size={14} alignmentBaseline="central" />,
 }
 
-const data: Payment[] = [
+const data: Users[] = [
   {
     id: 'm5gr84i9',
     task: 'TASK-8788',
@@ -155,7 +155,7 @@ const pages = [
   },
 ]
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Users>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -282,7 +282,7 @@ export const columns: ColumnDef<Payment>[] = [
 // * Start payment component
 // * Todas as vezes que você ver "use" isso é se chama HOOK
 
-export default function PaymentTable() {
+export default function UsersTable() {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})

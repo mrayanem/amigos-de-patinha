@@ -17,10 +17,15 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Menu, User } from 'lucide-react'
 import { useSession, signOut } from 'next-auth/react'
+// import { toast } from 'react-toastify'
 
 export function Navbar() {
   const pathname = usePathname()
   const { data: session, status } = useSession()
+
+  // const signOut = () => {
+  //   toast.success('Você saiu com sucesso!')
+  // }
 
   // Function to render user menu based on session status
   const renderUserMenu = () => {
