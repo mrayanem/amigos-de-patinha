@@ -48,7 +48,11 @@ export function Navbar() {
                 Editar perfil
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>Alterar senha</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/profile-details" passHref>
+                Alterar senha
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()}>Sair</DropdownMenuItem>
           </DropdownMenuContent>
