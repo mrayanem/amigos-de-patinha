@@ -2,84 +2,88 @@
 
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
-import {
-  FaCity,
-  FaHouseUser,
-  FaInfoCircle,
-  FaPaw,
-  FaUserAlt,
-} from 'react-icons/fa'
-import { useForm, Controller } from 'react-hook-form'
+import { FaHouseUser, FaPaw } from 'react-icons/fa'
+import { useForm } from 'react-hook-form'
 import { Form, FormField } from '../ui/form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useTransition } from 'react'
-import { Image, Loader2, LockKeyhole, Mail, Phone } from 'lucide-react'
+import { useState } from 'react'
+import { Image, Loader2 } from 'lucide-react'
 import { toast } from 'react-toastify'
-import { useRegister } from '@/client/auth'
+import { useCreateAnimal } from '@/client/animal'
 import { useRouter } from 'next/navigation'
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '../ui/textarea'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
-// Define o esquema de validação com confirmação de senha
-
-// erro ao usuário ser logado NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
-const formSchema = z
-  .object({
-    namePet: z.string({ required_error: 'Insira o nome do pet' }),
-    telephone: z.string({ required_error: 'Insira seu telefone' }),
-    sexo: z.string({ required_error: 'Insira o sexo do pet' }),
-    specie: z.string({ required_error: 'Insira a specie do pet' }),
-    age: z.string({ required_error: 'Insira a idade do pet' }),
-    city: z.string({ required_error: 'Insira sua cidade' }),
-    state: z.string({ required_error: 'Insira seu estado' }),
-    animalSize: z.string({ required_error: 'Insira o porte do pet' }),
-    password: z.string({ required_error: 'Insira uma senha' }),
-    description: z.string({ required_error: 'Insira a descrição' }),
-    confirmPassword: z.string({ required_error: 'Confirme sua senha' }),
-    animalPhoto: z.string({ required_error: 'Insira sua senha' }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'As senhas não correspondem',
-    path: ['confirmPassword'],
-  })
+// Atualizar o esquema de validação com os novos campos
+const formSchema = z.object({
+  name: z.string().nonempty('Insira o nome do pet'),
+  sex: z.enum(['FEMEA', 'MACHO'], { required_error: 'Insira o sexo do pet' }),
+  specieId: z.enum(['GATO', 'CACHORRO'], {
+    required_error: 'Insira a espécie do pet',
+  }),
+  age: z.string().transform((age) => parseInt(age)),
+  city: z.string().nonempty('Insira sua cidade'),
+  state: z.string().nonempty('Insira seu estado'),
+  animalSize: z.enum(['PEQUENO', 'MEDIO', 'GRANDE'], {
+    required_error: 'Insira o porte do pet',
+  }),
+  description: z.string().optional(),
+  photoAnimal: z.string().nonempty('Insira uma foto do pet'),
+  livesWellIn: z
+    .array(z.enum(['APARTAMENTO', 'CASA']))
+    .nonempty('Selecione pelo menos uma opção para "Vive bem em"'),
+  sociableWith: z
+    .array(z.enum(['OUTROS_ANIMAIS', 'CRIANCAS', 'DESCONHECIDOS']))
+    .nonempty('Selecione pelo menos uma opção para "Sociável com"'),
+  vetCare: z
+    .array(z.enum(['CASTRADO', 'VACINADO', 'VERMIFUGADO']))
+    .nonempty('Selecione pelo menos uma opção para "Cuidados veterinários"'),
+})
 
 export default function SectionCadastroPet() {
+  const [selectedImage, setSelectedImage] = useState('')
+
   const router = useRouter()
-  const [isPending, startTransition] = useTransition()
-  const { createUser, isSuccess } = useRegister()
+
+  const { createAnimal, isLoading } = useCreateAnimal()
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      photoAnimal: 'URL_QUALQUER',
+    },
   })
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    startTransition(async () => {
-      try {
-        const response = await createUser(values)
-        if (response?.error) {
-          toast.error('Erro ao criar usuário')
-        } else {
-          toast.success('Cadastro com sucesso! Você pode fazer login agora')
-          form.reset()
-          router.replace('/')
-        }
-      } catch (error) {
-        toast.error('Erro ao criar usuário')
-      }
+  console.log(form.formState.errors)
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    console.log(values)
+
+    createAnimal(values, {
+      onSuccess: () => {
+        toast.success('Cadastro realizado com sucesso!')
+        router.replace('/')
+      },
+      onError: () => {
+        toast.error('Erro ao cadastrar o animal.')
+      },
     })
   }
 
-  const StyledSelect = (props) => {
-    return <Select {...props} className={props.className} />
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setSelectedImage(file.name) // Atualiza o estado com o nome do arquivo selecionado
+    }
   }
 
   return (
@@ -89,7 +93,7 @@ export default function SectionCadastroPet() {
           <div className="flex-flex-col h-auto w-full max-w-[500px] items-center justify-center self-center">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
-                <div className="mb-[50px] flex flex-col items-center justify-center">
+                <div className="mb-[50px] flex flex-col items-center justify-center text-center">
                   <h2 className="text-3xl font-bold text-[#01377D]">
                     Cadastre um animal para adoção
                   </h2>
@@ -101,7 +105,7 @@ export default function SectionCadastroPet() {
                   <div className="w-full">
                     <FormField
                       control={form.control}
-                      name="namePet"
+                      name="name"
                       render={({ field }) => (
                         <div className="relative w-full">
                           <span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -109,7 +113,7 @@ export default function SectionCadastroPet() {
                           </span>
                           <Input
                             type="text"
-                            id="namePet"
+                            id="name"
                             placeholder="Nome do pet"
                             className="rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
                             {...field}
@@ -121,17 +125,22 @@ export default function SectionCadastroPet() {
                   <div className="flex w-full flex-row items-center gap-2">
                     <FormField
                       control={form.control}
-                      name="specie"
+                      name="specieId"
                       render={({ field }) => (
                         <div className="relative w-full">
-                          <Select {...field}>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
                             <SelectTrigger className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none">
                               <SelectValue placeholder="Espécie" />
                             </SelectTrigger>
                             <SelectContent className="w-full ">
                               <SelectGroup className="font-bold text-[#A2A7A9]">
-                                <SelectItem value="fem">Gato</SelectItem>
-                                <SelectItem value="mac">Cachorro</SelectItem>
+                                <SelectItem value="GATO">Gato</SelectItem>
+                                <SelectItem value="CACHORRO">
+                                  Cachorro
+                                </SelectItem>
                               </SelectGroup>
                             </SelectContent>
                           </Select>
@@ -140,17 +149,20 @@ export default function SectionCadastroPet() {
                     />
                     <FormField
                       control={form.control}
-                      name="sexo"
+                      name="sex"
                       render={({ field }) => (
                         <div className="relative w-full">
-                          <Select {...field}>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
                             <SelectTrigger className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none">
                               <SelectValue placeholder="Sexo" />
                             </SelectTrigger>
                             <SelectContent className="w-full ">
                               <SelectGroup className="font-bold text-[#A2A7A9]">
-                                <SelectItem value="fem">Fêmea</SelectItem>
-                                <SelectItem value="mac">Macho</SelectItem>
+                                <SelectItem value="FEMEA">Fêmea</SelectItem>
+                                <SelectItem value="MACHO">Macho</SelectItem>
                               </SelectGroup>
                             </SelectContent>
                           </Select>
@@ -182,15 +194,18 @@ export default function SectionCadastroPet() {
                       name="animalSize"
                       render={({ field }) => (
                         <div className="relative w-full">
-                          <Select {...field}>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
                             <SelectTrigger className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none">
                               <SelectValue placeholder="Porte" />
                             </SelectTrigger>
-                            <SelectContent className="w-full ">
+                            <SelectContent className="w-full">
                               <SelectGroup className="font-bold text-[#A2A7A9]">
-                                <SelectItem value="pequeno">Pequeno</SelectItem>
-                                <SelectItem value="medio">Médio</SelectItem>
-                                <SelectItem value="grande">Grande</SelectItem>
+                                <SelectItem value="PEQUENO">Pequeno</SelectItem>
+                                <SelectItem value="MEDIO">Médio</SelectItem>
+                                <SelectItem value="GRANDE">Grande</SelectItem>
                               </SelectGroup>
                             </SelectContent>
                           </Select>
@@ -198,161 +213,230 @@ export default function SectionCadastroPet() {
                       )}
                     />
                   </div>
-                  <div className="w-full">
+                  <div className="flex w-full flex-row gap-2">
+                    <FormField
+                      control={form.control}
+                      name="state"
+                      render={({ field }) => (
+                        <div className="relative w-full">
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <FaHouseUser className="text-[#A2A7A9]" size={17} />
+                          </span>
+                          <Input
+                            type="text"
+                            id="state"
+                            placeholder="Estado"
+                            className="rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
+                            {...field}
+                          />
+                        </div>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="city"
+                      render={({ field }) => (
+                        <div className="relative w-full">
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <FaHouseUser className="text-[#A2A7A9]" size={17} />
+                          </span>
+                          <Input
+                            type="text"
+                            id="city"
+                            placeholder="Cidade"
+                            className="rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
+                            {...field}
+                          />
+                        </div>
+                      )}
+                    />
+                  </div>
+
+                  <div className="flex w-full flex-col">
                     <FormField
                       control={form.control}
                       name="description"
                       render={({ field }) => (
-                        <Textarea
-                          id="description"
-                          placeholder="Sobre o pet"
-                          className="h-[35px] rounded-[5px] border border-none bg-[#F5F5F5] font-bold text-[#A2A7A9]"
-                          {...field}
-                        />
+                        <div className="relative w-full">
+                          <Textarea
+                            id="description"
+                            placeholder="Descrição do animal"
+                            className="h-[45px] rounded-[5px] border-none bg-[#F5F5F5] font-bold text-[#A2A7A9]"
+                            {...field}
+                          />
+                        </div>
                       )}
                     />
                   </div>
                 </div>
                 <div className="mb-5 flex flex-col">
-                  <div className="w-full">
-                    <span className="text-sm font-semibold text-[#A2A7A9]">
-                      Foto do pet
-                    </span>
-                    <div className="relative mt-2 w-full">
+                  <span className="text-sm font-semibold text-[#A2A7A9]">
+                    Vive bem em
+                  </span>
+                  <div className="mt-2 flex w-full flex-col">
+                    <FormField
+                      control={form.control}
+                      name="photoAnimal"
+                      render={({ field }) => (
+                        <div className="relative w-full">
+                          <label
+                            htmlFor="PhotoAnimal"
+                            className="absolute inset-y-0 left-0 flex items-center pl-3"
+                          >
+                            <Image className="text-[#A2A7A9]" size={17} />
+                          </label>
+                          <input
+                            type="file"
+                            id="photoAnimal"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={(e) => {
+                              handleImageChange(e)
+                              field.onChange(e) // Atualiza o campo com o arquivo selecionado
+                            }}
+                          />
+                          <Input
+                            type="text"
+                            value={selectedImage} // Exibe o nome do arquivo selecionado
+                            placeholder="Selecionar foto do pet"
+                            className="w-full rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9] md:w-[250px]"
+                            onClick={() =>
+                              document.getElementById('photoAnimal').click()
+                            }
+                            readOnly
+                          />
+                        </div>
+                      )}
+                    />
+                  </div>
+                </div>
+                <div className="mb-5 flex flex-col gap-3">
+                  <div className="mb-5 flex flex-col">
+                    <div className="mb-2 flex flex-col items-center justify-center">
+                      <span className="text-md font-semibold text-[#A2A7A9]">
+                        Informações complementares
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-sm font-semibold text-[#A2A7A9]">
+                        Vive bem em
+                      </span>
                       <FormField
                         control={form.control}
-                        name="animalPhoto"
+                        name="livesWellIn"
                         render={({ field }) => (
-                          <>
-                            <input
-                              type="file"
-                              id="animalPhoto"
-                              className="hidden"
-                              {...field}
-                            />
-                            <label
-                              htmlFor="animalPhoto"
-                              className="flex w-full cursor-pointer items-center rounded-[5px] border border-none bg-[#F5F5F5] py-2 pl-4 font-semibold text-[#A2A7A9] md:w-[200px]"
+                          <div className="relative mt-2 w-full">
+                            <ToggleGroup
+                              type="multiple"
+                              value={field.value}
+                              onValueChange={field.onChange}
                             >
-                              <Image
-                                className="mr-2 text-[#A2A7A9]"
-                                size={17}
-                              />
-                              escolher arquivo
-                            </label>
-                          </>
+                              <ToggleGroupItem
+                                value="APARTAMENTO"
+                                className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none"
+                              >
+                                Apartamento
+                              </ToggleGroupItem>
+                              <ToggleGroupItem
+                                value="CASA"
+                                className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none"
+                              >
+                                Casa
+                              </ToggleGroupItem>
+                            </ToggleGroup>
+                          </div>
                         )}
                       />
                     </div>
                   </div>
-                </div>
-                <div className="mb-5 flex flex-col">
-                  <div className="mb-2 flex flex-col items-center justify-center">
-                    <span className="text-md font-semibold text-[#A2A7A9]">
-                      informações complementares
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-sm font-semibold text-[#A2A7A9]">
-                      Vive bem em
-                    </span>
-                    <FormField
-                      control={form.control}
-                      name="animalSize"
-                      render={({ field }) => (
-                        <div className="relative mt-2 w-full">
-                          <ToggleGroup type="multiple">
-                            <ToggleGroupItem
-                              value="apartamento"
-                              className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none"
+
+                  <div className="mb-5 flex flex-col">
+                    <div>
+                      <span className="text-sm font-semibold text-[#A2A7A9]">
+                        Sociável com
+                      </span>
+                      <FormField
+                        control={form.control}
+                        name="sociableWith"
+                        render={({ field }) => (
+                          <div className="relative mt-2 w-full">
+                            <ToggleGroup
+                              type="multiple"
+                              value={field.value}
+                              onValueChange={field.onChange}
                             >
-                              Apartamento
-                            </ToggleGroupItem>
-                            <ToggleGroupItem
-                              value="casa"
-                              className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none"
-                            >
-                              Casa
-                            </ToggleGroupItem>
-                          </ToggleGroup>
-                        </div>
-                      )}
-                    />
+                              <ToggleGroupItem
+                                value="OUTROS_ANIMAIS"
+                                className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none"
+                              >
+                                Outros animais
+                              </ToggleGroupItem>
+                              <ToggleGroupItem
+                                value="CRIANCAS"
+                                className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none"
+                              >
+                                Crianças
+                              </ToggleGroupItem>
+                              <ToggleGroupItem
+                                value="DESCONHECIDOS"
+                                className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none"
+                              >
+                                Desconhecidos
+                              </ToggleGroupItem>
+                            </ToggleGroup>
+                          </div>
+                        )}
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="mb-5 flex flex-col">
-                  <div className="mb-2 flex flex-col items-center justify-center">
-                    <span className="text-md font-semibold text-[#A2A7A9]">
-                      informações complementares
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-sm font-semibold text-[#A2A7A9]">
-                      Vive bem em
-                    </span>
-                    <FormField
-                      control={form.control}
-                      name="animalSize"
-                      render={({ field }) => (
-                        <div className="relative mt-2 w-full">
-                          <ToggleGroup type="multiple">
-                            <ToggleGroupItem
-                              value="apartamento"
-                              className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none"
+
+                  <div className="mb-5 flex flex-col">
+                    <div>
+                      <span className="text-sm font-semibold text-[#A2A7A9]">
+                        Cuidados veterinários
+                      </span>
+                      <FormField
+                        control={form.control}
+                        name="vetCare"
+                        render={({ field }) => (
+                          <div className="relative mt-2 w-full">
+                            <ToggleGroup
+                              type="multiple"
+                              value={field.value}
+                              onValueChange={field.onChange}
                             >
-                              Apartamento
-                            </ToggleGroupItem>
-                            <ToggleGroupItem
-                              value="casa"
-                              className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none"
-                            >
-                              Casa
-                            </ToggleGroupItem>
-                          </ToggleGroup>
-                        </div>
-                      )}
-                    />
+                              <ToggleGroupItem
+                                value="CASTRADO"
+                                className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none"
+                              >
+                                Castrado
+                              </ToggleGroupItem>
+                              <ToggleGroupItem
+                                value="VACINADO"
+                                className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none"
+                              >
+                                Vacinado
+                              </ToggleGroupItem>
+                              <ToggleGroupItem
+                                value="VERMIFUGADO"
+                                className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none"
+                              >
+                                Vermifugado
+                              </ToggleGroupItem>
+                            </ToggleGroup>
+                          </div>
+                        )}
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="mb-5 flex flex-col">
-                  <div className="mb-2 flex flex-col items-center justify-center">
-                    <span className="text-md font-semibold text-[#A2A7A9]">
-                      informações complementares
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-sm font-semibold text-[#A2A7A9]">
-                      Vive bem em
-                    </span>
-                    <FormField
-                      control={form.control}
-                      name="animalSize"
-                      render={({ field }) => (
-                        <div className="relative mt-2 w-full">
-                          <ToggleGroup type="multiple">
-                            <ToggleGroupItem
-                              value="apartamento"
-                              className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none"
-                            >
-                              Apartamento
-                            </ToggleGroupItem>
-                            <ToggleGroupItem
-                              value="casa"
-                              className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none"
-                            >
-                              Casa
-                            </ToggleGroupItem>
-                          </ToggleGroup>
-                        </div>
-                      )}
-                    />
-                  </div>
+
                   <div className="mt-5 flex flex-col items-center justify-center">
                     <Button
                       type="submit"
                       className="h-[50px] w-full rounded-[20px] bg-[#01377D] font-bold text-white shadow-sm hover:bg-[#012452] md:w-[280px]"
+                      disabled={isLoading}
                     >
-                      {isPending ? (
+                      {isLoading ? (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       ) : (
                         'Cadastrar'

@@ -9,10 +9,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Loader2, LockKeyhole, Mail, Phone } from 'lucide-react'
 import { toast } from 'react-toastify'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useRegister } from '@/client/auth'
 import { useRouter } from 'next/navigation'
+import React from 'react'
+import { Label } from '@radix-ui/react-label'
 
-// Define o esquema de validação com confirmação de senha
 const formSchema = z
   .object({
     name: z.string({ required_error: 'Insira seu nome' }),
@@ -24,15 +26,15 @@ const formSchema = z
       .email('Insira um email válido'),
     password: z.string({ required_error: 'Insira uma senha' }),
     confirmPassword: z.string({ required_error: 'Confirme sua senha' }),
+    role: z.string({ required_error: 'Insira a role' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'As senhas não correspondem',
     path: ['confirmPassword'],
   })
 
-export default function SectionCadastro() {
+export default function SectionCadastroAdmin() {
   const router = useRouter()
-  // const [isPending] = useTransition()
   const { createUser, isLoading } = useRegister()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -201,6 +203,18 @@ export default function SectionCadastro() {
                         </div>
                       )}
                     />
+                  </div>
+                  <div className="w-full">
+                    <RadioGroup defaultValue="comfortable">
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="default" id="r1" />
+                        <Label htmlFor="r1">Default</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="comfortable" id="r2" />
+                        <Label htmlFor="r2">Comfortable</Label>
+                      </div>
+                    </RadioGroup>
                   </div>
                   <div className="mt-5 flex flex-col items-center justify-center">
                     <Button

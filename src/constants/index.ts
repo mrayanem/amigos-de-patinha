@@ -5,6 +5,6 @@ export const Backlinks = [
 ]
 
 export const AdminBacklinks = [
-  { title: 'animals', url: '/animals' },
   { title: 'users', url: '/users' },
+  { title: 'animals', url: '/animals' },
 ]

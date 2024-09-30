@@ -3,12 +3,12 @@ import { CreateUser } from '../types'
 import { useMutation } from 'react-query'
 
 async function postUser(payload: CreateUser) {
-  return api.post('/users', payload).then((res) => res.data)
+  return api.post('/register', payload).then((res) => res.data)
 }
 
 export function useRegister() {
   const {
-    data: createduser,
+    data: createdUser,
     mutate: createUser,
     ...rest
   } = useMutation({
@@ -16,7 +16,7 @@ export function useRegister() {
   })
 
   return {
-    createduser,
+    createdUser,
     createUser,
     ...rest,
   }

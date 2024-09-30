@@ -28,11 +28,16 @@ const formSchema = z.object({
 export default function SectionLogin() {
   const { isLoading } = useRegister()
   const router = useRouter()
-  const session = useSession()
+  const { data: session } = useSession()
 
   useEffect(() => {
-    if (session.data?.user) {
-      router.replace('/')
+    if (session?.user) {
+      const userRole = session.user.role // Obter o papel do usuário
+      if (userRole === 'admin') {
+        router.replace('/users')
+      } else if (userRole === 'client') {
+        router.replace('/')
+      }
     }
   }, [session, router])
 
@@ -54,7 +59,16 @@ export default function SectionLogin() {
       } else {
         toast.success('Usuário logado com sucesso')
         form.reset()
-        router.replace('/')
+
+        // Re-fetch the session to get updated user data
+        const newSession = await useSession() // Obter dados atualizados da sessão
+        const userRole = newSession.data?.user?.role // Verificar o papel do usuário
+
+        if (userRole === 'admin') {
+          router.replace('/users')
+        } else if (userRole === 'client') {
+          router.replace('/')
+        }
       }
     })
   }
@@ -77,7 +91,7 @@ export default function SectionLogin() {
               </a>
             </Button>
           </div>
-          <div className="flex-flex-col h-auto w-full items-center justify-center self-center px-5 py-5 md:px-[140px] md:py-0">
+          <div className="flex h-auto w-full items-center justify-center self-center px-5 py-5 md:py-0">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="mb-[50px] flex flex-col items-center justify-center">
@@ -94,7 +108,7 @@ export default function SectionLogin() {
                       control={form.control}
                       name="email"
                       render={({ field }) => (
-                        <div className="relative">
+                        <div className="relative w-full">
                           <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                             <Mail className="text-[#A2A7A9]" size={20} />
                           </span>
@@ -102,7 +116,7 @@ export default function SectionLogin() {
                             type="email"
                             id="email"
                             placeholder="e-mail"
-                            className="rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
+                            className="w-full rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
                             {...field}
                           />
                         </div>
@@ -114,7 +128,7 @@ export default function SectionLogin() {
                       control={form.control}
                       name="password"
                       render={({ field }) => (
-                        <div className="relative">
+                        <div className="relative w-full">
                           <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                             <LockKeyhole className="text-[#A2A7A9]" size={20} />
                           </span>
@@ -122,7 +136,7 @@ export default function SectionLogin() {
                             type="password"
                             id="password"
                             placeholder="senha"
-                            className="rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
+                            className="w-full rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
                             {...field}
                           />
                         </div>

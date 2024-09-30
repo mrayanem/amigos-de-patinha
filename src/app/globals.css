@@ -79,3 +79,9 @@
     grid-template-columns: max-content 1fr min-content;
   }
 }
+
+@layer utilities-profile {
+  .grid-user {
+    grid-template-columns: minmax(3rem, 5rem) 1fr;
+  }
+}

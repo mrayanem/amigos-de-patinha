@@ -46,7 +46,7 @@ export default function Footer() {
                 </div>
               </div>
             </div>
-            <div className=" mr-3 mt-6 flex flex-col gap-4 md:mt-0">
+            <div className=" mr-3 mt-6 flex flex-col items-center justify-center gap-4 md:mt-0">
               <p className="font-semibold text-white">Siga-nos</p>
               <div className="flex gap-3">
                 <a
@@ -57,14 +57,14 @@ export default function Footer() {
                 >
                   <Instagram />
                 </a>
-                <a
+                {/* <a
                   href=""
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-white"
                 >
                   <Facebook />
-                </a>
+                </a> */}
               </div>
             </div>
           </div>

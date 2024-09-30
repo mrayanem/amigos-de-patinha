@@ -36,10 +36,18 @@ export function Navbar() {
             <User className="h-[25px] w-[25px] text-white" />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem>Cadastrar animal</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/cadastro-pet" passHref>
+                Cadastrar animal
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuItem>Conta</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Editar perfil</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/profile" passHref>
+                Editar perfil
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuItem>Alterar senha</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()}>Sair</DropdownMenuItem>
@@ -52,7 +60,7 @@ export function Navbar() {
           <Button
             asChild={true}
             className={
-              'bg-transparent text-base font-medium text-black hover:text-zinc-500'
+              'bg-transparent text-base font-medium text-black hover:bg-transparent hover:text-zinc-500'
             }
           >
             <Link href="/login">Login</Link>
@@ -94,7 +102,7 @@ export function Navbar() {
               className={
                 pathname === link.url
                   ? 'rounded-full bg-[#01377D] text-base font-semibold text-white shadow shadow-[#009DD0] transition-all hover:bg-[#084390]'
-                  : 'bg-transparent text-base font-medium text-black hover:text-zinc-500'
+                  : 'bg-transparent text-base font-medium text-black hover:bg-transparent hover:text-zinc-500'
               }
             >
               <Link href={link.url}>{link.title}</Link>
