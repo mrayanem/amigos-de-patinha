@@ -4,6 +4,7 @@ declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: DefaultSession['user'] & {
       id: string
+      token?: accessToken
     }
   }
   interface User extends DefaultUser {

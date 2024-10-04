@@ -10,7 +10,5 @@ api.interceptors.request.use(async (config) => {
 
   config.headers.Authorization = `Bearer ${session?.user.token}`
 
-  console.log(`Bearer ${session?.user.token}`)
-
   return config
 })

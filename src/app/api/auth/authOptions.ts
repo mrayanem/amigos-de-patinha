@@ -3,7 +3,7 @@ import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
 type TAuth = {
-  id: number
+  id: string
   email: string
   password: string
 }
