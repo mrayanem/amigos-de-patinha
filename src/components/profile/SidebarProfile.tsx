@@ -14,7 +14,8 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
 import { api } from '@/client'
-import { useSession } from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
+import { toast } from 'react-toastify'
 
 const deleteUserData = async (userId: string) => {
   const response = await api.delete(`/user/${userId}`)
@@ -24,7 +25,6 @@ const deleteUserData = async (userId: string) => {
 export function NavProfile() {
   const { data: session } = useSession()
   const userId = session?.user?.id
-
   const pathname = usePathname()
   const router = useRouter()
 
@@ -43,6 +43,19 @@ export function NavProfile() {
     router.push(url)
   }
 
+  const handleDeactivateAccount = async () => {
+    if (!userId) return
+
+    try {
+      await deleteUserData(userId)
+      toast.success('Conta desativada com sucesso!')
+      signOut()
+      router.replace('/')
+    } catch (error) {
+      toast.error('Erro ao desativar a conta. Tente novamente.')
+    }
+  }
+
   return (
     <aside className="bg-sidebar-texture flex h-screen w-full flex-col gap-6 bg-transparent px-3 py-[8px] shadow-xl">
       <div className="flex h-full w-full flex-col">
@@ -51,7 +64,7 @@ export function NavProfile() {
             {iconMap.map((link, index) => (
               <Button
                 key={'link_' + index}
-                className={`flex h-auto w-full items-center justify-center self-center bg-transparent text-lg font-medium hover:bg-transparent hover:text-[#01377db7] hover:shadow-md ${
+                className={`flex h-auto w-full items-center justify-center self-center bg-transparent text-lg font-medium hover:bg-transparent hover:text-[#01377db7] ${
                   pathname === link.url
                     ? 'bg-transparent font-semibold text-white hover:shadow-md'
                     : 'text-[#A5B0D0] hover:shadow-md'
@@ -74,7 +87,7 @@ export function NavProfile() {
                 <DropdownMenuContent>
                   <DropdownMenuLabel>Opções</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={deleteUserData(userId)}>
+                  <DropdownMenuItem onClick={handleDeactivateAccount}>
                     Desativar conta
                   </DropdownMenuItem>
                 </DropdownMenuContent>

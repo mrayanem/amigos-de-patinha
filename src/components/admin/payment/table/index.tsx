@@ -45,6 +45,7 @@ interface User {
   id: string
   name: string
   email: string
+  status: boolean
   createdAt: string // Supondo que você tenha uma data de criação
 }
 
@@ -69,6 +70,8 @@ export default function UsersTable() {
     }
     fetchUsers()
   }, [])
+
+  console.log(users)
 
   useEffect(() => {
     const filtered = users.filter((user) => {
@@ -152,6 +155,7 @@ export default function UsersTable() {
               <TableHead className="w-[100px]">ID do Usuário</TableHead>
               <TableHead>Nome do Usuário</TableHead>
               <TableHead>Email do Usuário</TableHead>
+              <TableHead>Status do Usuário</TableHead>
               <TableHead>Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -161,6 +165,7 @@ export default function UsersTable() {
                 <TableCell className="text-xs font-normal">{user.id}</TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
+                <TableCell>{user.status ? 'ativo' : 'inativo'}</TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
