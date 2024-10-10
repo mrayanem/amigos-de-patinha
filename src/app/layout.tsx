@@ -1,7 +1,6 @@
 import './globals.css'
 import { Metadata } from 'next'
 import '@fontsource/poppins'
-
 import { NextAuthSessionProvider, ReactQueryProvider } from '../../providers'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'

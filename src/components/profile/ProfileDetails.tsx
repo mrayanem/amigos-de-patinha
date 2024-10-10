@@ -9,6 +9,7 @@ import axios from 'axios'
 import { useMutation } from 'react-query'
 import { toast } from 'react-toastify'
 import { getSession } from 'next-auth/react'
+import Link from 'next/link'
 
 interface User {
   id: string
@@ -173,7 +174,7 @@ export default function ProfileDetails() {
                 Salvar
               </Button>
               <Button className="w-[200px] border border-[#01377D] bg-transparent text-lg text-[#01377D] hover:border-[#01377d97] hover:bg-transparent">
-                Cancelar
+                <Link href={'/profile'}>Cancelar</Link>
               </Button>
             </div>
           </div>

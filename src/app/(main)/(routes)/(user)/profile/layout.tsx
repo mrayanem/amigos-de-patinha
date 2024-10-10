@@ -10,16 +10,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  // Obtém a sessão do usuário
   const session = await getServerSession(nextAuthOptions)
 
   if (!session) {
-    // Redireciona para a página de login se não estiver autenticado
     redirect('/login')
     return null
   }
 
-  // Verifica se o papel do usuário não é 'client' nem 'admin'
   if (session.user.role !== 'client' && session.user.role !== 'admin') {
     redirect('/')
     return null
