@@ -3,13 +3,17 @@ import { CreateAnimal } from '../types'
 import { useMutation } from 'react-query'
 
 async function postAnimal(payload: CreateAnimal) {
-  return api.post('/animals', payload).then((res) => res.data)
+  const response = await api.post('/animals', payload)
+  return response.data
 }
 
 export function useCreateAnimal() {
   const {
     data: createdAnimal,
     mutate: createAnimal,
+    isLoading,
+    isError,
+    error,
     ...rest
   } = useMutation({
     mutationFn: postAnimal,
@@ -18,6 +22,9 @@ export function useCreateAnimal() {
   return {
     createdAnimal,
     createAnimal,
+    isLoading,
+    isError,
+    error,
     ...rest,
   }
 }

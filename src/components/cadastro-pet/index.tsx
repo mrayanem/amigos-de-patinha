@@ -51,9 +51,7 @@ const formSchema = z.object({
 
 export default function SectionCadastroPet() {
   const [selectedImage, setSelectedImage] = useState('')
-
   const router = useRouter()
-
   const { createAnimal, isLoading } = useCreateAnimal()
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -63,11 +61,7 @@ export default function SectionCadastroPet() {
     },
   })
 
-  console.log(form.formState.errors)
-
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values)
-
     createAnimal(values, {
       onSuccess: () => {
         toast.success('Cadastro realizado com sucesso!')
@@ -83,6 +77,7 @@ export default function SectionCadastroPet() {
     const file = e.target.files[0]
     if (file) {
       setSelectedImage(file.name) // Atualiza o estado com o nome do arquivo selecionado
+      form.setValue('photoAnimal', file.name) // Atualiza o campo com o nome do arquivo
     }
   }
 
@@ -90,7 +85,7 @@ export default function SectionCadastroPet() {
     <section className="bg-[#f7f4f4] px-4 py-10 md:py-[40px]">
       <div className="mx-auto flex max-w-[1000px] flex-col items-center">
         <div className="flex h-auto w-full flex-col items-center justify-center self-center rounded-[20px] bg-white py-5 shadow-2xl md:h-auto">
-          <div className="flex-flex-col h-auto w-full max-w-[500px] items-center justify-center self-center">
+          <div className="flex h-auto w-full max-w-[500px] flex-col items-center justify-center self-center">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="mb-[50px] flex flex-col items-center justify-center text-center">
@@ -280,7 +275,7 @@ export default function SectionCadastroPet() {
                       render={({ field }) => (
                         <div className="relative w-full">
                           <label
-                            htmlFor="PhotoAnimal"
+                            htmlFor="photoAnimal"
                             className="absolute inset-y-0 left-0 flex items-center pl-3"
                           >
                             <Image className="text-[#A2A7A9]" size={17} />
