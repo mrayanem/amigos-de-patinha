@@ -49,8 +49,9 @@ export function NavProfile() {
     try {
       await deleteUserData(userId)
       toast.success('Conta desativada com sucesso!')
-      signOut()
-      router.replace('/')
+      await signOut({
+        callbackUrl: "/"
+      })
     } catch (error) {
       toast.error('Erro ao desativar a conta. Tente novamente.')
     }
