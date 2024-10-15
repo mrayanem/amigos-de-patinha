@@ -35,11 +35,11 @@ export const nextAuthOptions: NextAuthOptions = {
           })
           const user = response.data.data
 
-          if (user) {
-            return user
-          } else {
+          if (!user) {
             return null
           }
+
+          return user
         } catch (err) {
           console.error('Erro na autenticação:', err)
           return null

@@ -6,9 +6,9 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { api } from '@/client'
 import axios from 'axios'
-import { useMutation } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { toast } from 'react-toastify'
-import { getSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
 interface User {
@@ -61,17 +61,15 @@ const updateUserData = async ({ id, ...rest }: User) => {
 // eslint-disable-next-line @next/next/no-async-client-component
 export default function ProfileDetails() {
   const [user, setUser] = useState<User | null>(null)
+  const { data: session } = useSession()
+  const userId = session?.user?.id
 
   useEffect(() => {
     const loadUserData = async () => {
-      try {
-        const session = await getSession()
-        if (session?.user.id) {
-          const data = await fetchUserData(session?.user.id)
-          setUser(data)
-        }
-      } catch (error) {
-        console.error(error)
+      if (userId) {
+        const data = await fetchUserData(userId)
+        
+        setUser(data)
       }
     }
 
