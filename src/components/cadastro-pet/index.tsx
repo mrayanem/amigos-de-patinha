@@ -45,29 +45,29 @@ const formSchema = z.object({
   }),
   description: z.string().nonempty('Insira a descrição'),
   photoAnimal: z
-  .custom<FileList>()
-  .refine((files) => files?.length == 1, "Image is required.")
-  .refine(
-    (files) => files?.[0]?.size <= MAX_FILE_SIZE,
-    `Max file size is 5MB.`
-  )
-  .refine(
-    (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-    ".jpg, .jpeg, .png and .webp files are accepted."
-  ),
-  livesWellIn: z
-    .array(z.enum(['APARTAMENTO', 'CASA']))
-    .nonempty('Selecione pelo menos uma opção para "Vive bem em"'),
-  sociableWith: z
-    .array(z.enum(['OUTROS_ANIMAIS', 'CRIANCAS', 'DESCONHECIDOS']))
-    .nonempty('Selecione pelo menos uma opção para "Sociável com"'),
-  vetCare: z
-    .array(z.enum(['CASTRADO', 'VACINADO', 'VERMIFUGADO']))
-    .nonempty('Selecione pelo menos uma opção para "Cuidados veterinários"'),
+    .custom<FileList>()
+    .refine((files) => files?.length === 1, 'Image is required.')
+    .refine(
+      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
+      `Max file size is 5MB.`,
+    )
+    .refine(
+      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+      '.jpg, .jpeg, .png and .webp files are accepted.',
+    ),
+  livesWellIn: z.enum(['APARTAMENTO', 'CASA'], {
+    required_error: 'Selecione uma opção para "Vive bem em"',
+  }),
+  sociableWith: z.enum(['OUTROS_ANIMAIS', 'CRIANCAS', 'DESCONHECIDOS'], {
+    required_error: 'Selecione uma opção para "Sociável com"',
+  }),
+  vetCare: z.enum(['CASTRADO', 'VACINADO', 'VERMIFUGADO'], {
+    required_error: 'Selecione uma opção para "Cuidados veterinários"',
+  }),
 })
 
 export default function SectionCadastroPet() {
-  const [selectedImage, setSelectedImage] = useState<File | null>()
+  const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const router = useRouter()
   const { createAnimal, isLoading } = useCreateAnimal()
 
@@ -91,7 +91,7 @@ export default function SectionCadastroPet() {
     const file = e.target.files
     if (file) {
       setSelectedImage(file[0])
-      form.setValue("photoAnimal", file)
+      form.setValue('photoAnimal', file)
     }
   }
 
@@ -129,7 +129,7 @@ export default function SectionCadastroPet() {
                       </div>
                     )}
                   />
-                  <div className="flex w-full flex-row gap-2">
+                  <div className="grid w-full grid-cols-2 gap-2">
                     <FormField
                       control={form.control}
                       name="specie"
@@ -171,7 +171,7 @@ export default function SectionCadastroPet() {
                       )}
                     />
                   </div>
-                  <div className="flex w-full flex-row gap-2">
+                  <div className="grid w-full grid-cols-2 gap-2">
                     <FormField
                       control={form.control}
                       name="age"
@@ -212,7 +212,7 @@ export default function SectionCadastroPet() {
                       )}
                     />
                   </div>
-                  <div className="flex w-full flex-row gap-2">
+                  <div className="grid w-full grid-cols-2 gap-2">
                     <FormField
                       control={form.control}
                       name="state"
@@ -271,7 +271,7 @@ export default function SectionCadastroPet() {
 
                 <div className="mb-5 flex flex-col">
                   <span className="text-sm font-semibold text-[#A2A7A9]">
-                    Vive bem em
+                    Foto do pet
                   </span>
                   <div className="mt-2 flex w-full flex-col">
                     <FormField
@@ -317,7 +317,7 @@ export default function SectionCadastroPet() {
                         Informações complementares
                       </span>
                     </div>
-                    <div>
+                    <div className="mb-5">
                       <span className="text-sm font-semibold text-[#A2A7A9]">
                         Vive bem em
                       </span>
@@ -327,8 +327,8 @@ export default function SectionCadastroPet() {
                         render={({ field }) => (
                           <div className="relative mt-2 w-full">
                             <ToggleGroup
-                              type="multiple"
-                              value={field.value}
+                              type="single"
+                              value={field.value as string}
                               onValueChange={field.onChange}
                             >
                               <ToggleGroupItem
@@ -348,9 +348,7 @@ export default function SectionCadastroPet() {
                         )}
                       />
                     </div>
-                  </div>
 
-                  <div className="mb-5 flex flex-col">
                     <div>
                       <span className="text-sm font-semibold text-[#A2A7A9]">
                         Sociável com
@@ -361,8 +359,8 @@ export default function SectionCadastroPet() {
                         render={({ field }) => (
                           <div className="relative mt-2 w-full">
                             <ToggleGroup
-                              type="multiple"
-                              value={field.value}
+                              type="single"
+                              value={field.value as string}
                               onValueChange={field.onChange}
                             >
                               <ToggleGroupItem
@@ -401,8 +399,8 @@ export default function SectionCadastroPet() {
                         render={({ field }) => (
                           <div className="relative mt-2 w-full">
                             <ToggleGroup
-                              type="multiple"
-                              value={field.value}
+                              type="single"
+                              value={field.value as string}
                               onValueChange={field.onChange}
                             >
                               <ToggleGroupItem
