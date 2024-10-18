@@ -1,4 +1,4 @@
-import { DataTableDemo } from '@/components/admin/payment'
+import { DataTableDemo } from '@/components/admin/users'
 
 export default function Users() {
   return (

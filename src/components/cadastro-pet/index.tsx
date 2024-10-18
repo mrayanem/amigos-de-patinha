@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form'
 import { Form, FormField } from '../ui/form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { Image, Loader2 } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { useCreateAnimal } from '@/client/animal'
@@ -23,11 +23,18 @@ import {
 import { Textarea } from '../ui/textarea'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
-// Atualizar o esquema de validação com os novos campos
+const MAX_FILE_SIZE = 500000
+const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+]
+
 const formSchema = z.object({
   name: z.string().nonempty('Insira o nome do pet'),
   sex: z.enum(['FEMEA', 'MACHO'], { required_error: 'Insira o sexo do pet' }),
-  specieId: z.enum(['GATO', 'CACHORRO'], {
+  specie: z.enum(['GATO', 'CACHORRO'], {
     required_error: 'Insira a espécie do pet',
   }),
   age: z.string().transform((age) => parseInt(age)),
@@ -36,8 +43,18 @@ const formSchema = z.object({
   animalSize: z.enum(['PEQUENO', 'MEDIO', 'GRANDE'], {
     required_error: 'Insira o porte do pet',
   }),
-  description: z.string().optional(),
-  photoAnimal: z.string().nonempty('Insira uma foto do pet'),
+  description: z.string().nonempty('Insira a descrição'),
+  photoAnimal: z
+    .any()
+    .refine((files) => files?.length > 0, 'Imagem é obrigatória.')
+    .refine(
+      (files) => files[0]?.size <= MAX_FILE_SIZE,
+      `O tamanho máximo do arquivo é 5MB.`,
+    )
+    .refine(
+      (files) => ACCEPTED_IMAGE_TYPES.includes(files[0]?.type),
+      '.jpg, .jpeg, .png e .webp são aceitos.',
+    ),
   livesWellIn: z
     .array(z.enum(['APARTAMENTO', 'CASA']))
     .nonempty('Selecione pelo menos uma opção para "Vive bem em"'),
@@ -56,12 +73,10 @@ export default function SectionCadastroPet() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      photoAnimal: 'URL_QUALQUER',
-    },
   })
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
+    console.log(values)
     createAnimal(values, {
       onSuccess: () => {
         toast.success('Cadastro realizado com sucesso!')
@@ -73,11 +88,11 @@ export default function SectionCadastroPet() {
     })
   }
 
-  const handleImageChange = (e) => {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files[0]
     if (file) {
       setSelectedImage(file.name) // Atualiza o estado com o nome do arquivo selecionado
-      form.setValue('photoAnimal', file.name) // Atualiza o campo com o nome do arquivo
+      form.setValue('photoAnimal', file) // Atualiza o campo com o arquivo
     }
   }
 
@@ -97,71 +112,63 @@ export default function SectionCadastroPet() {
                   </span>
                 </div>
                 <div className="mb-5 flex flex-col gap-3">
-                  <div className="w-full">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <div className="relative w-full">
-                          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <FaPaw className="text-[#A2A7A9]" size={17} />
-                          </span>
-                          <Input
-                            type="text"
-                            id="name"
-                            placeholder="Nome do pet"
-                            className="rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
-                            {...field}
-                          />
-                        </div>
-                      )}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <div className="relative w-full">
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                          <FaPaw className="text-[#A2A7A9]" size={17} />
+                        </span>
+                        <Input
+                          type="text"
+                          id="name"
+                          placeholder="Nome do pet"
+                          className="rounded-[5px] border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
+                          {...field}
+                        />
+                      </div>
+                    )}
+                  />
                   <div className="flex w-full flex-row items-center gap-2">
                     <FormField
                       control={form.control}
-                      name="specieId"
+                      name="specie"
                       render={({ field }) => (
-                        <div className="relative w-full">
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <SelectTrigger className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none">
-                              <SelectValue placeholder="Espécie" />
-                            </SelectTrigger>
-                            <SelectContent className="w-full ">
-                              <SelectGroup className="font-bold text-[#A2A7A9]">
-                                <SelectItem value="GATO">Gato</SelectItem>
-                                <SelectItem value="CACHORRO">
-                                  Cachorro
-                                </SelectItem>
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        </div>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none">
+                            <SelectValue placeholder="Espécie" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup className="font-bold text-[#A2A7A9]">
+                              <SelectItem value="GATO">Gato</SelectItem>
+                              <SelectItem value="CACHORRO">Cachorro</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
                       )}
                     />
                     <FormField
                       control={form.control}
                       name="sex"
                       render={({ field }) => (
-                        <div className="relative w-full">
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <SelectTrigger className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none">
-                              <SelectValue placeholder="Sexo" />
-                            </SelectTrigger>
-                            <SelectContent className="w-full ">
-                              <SelectGroup className="font-bold text-[#A2A7A9]">
-                                <SelectItem value="FEMEA">Fêmea</SelectItem>
-                                <SelectItem value="MACHO">Macho</SelectItem>
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        </div>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none">
+                            <SelectValue placeholder="Sexo" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup className="font-bold text-[#A2A7A9]">
+                              <SelectItem value="FEMEA">Fêmea</SelectItem>
+                              <SelectItem value="MACHO">Macho</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
                       )}
                     />
                   </div>
@@ -178,7 +185,7 @@ export default function SectionCadastroPet() {
                             type="text"
                             id="age"
                             placeholder="Idade"
-                            className="rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
+                            className="rounded-[5px] border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
                             {...field}
                           />
                         </div>
@@ -188,23 +195,21 @@ export default function SectionCadastroPet() {
                       control={form.control}
                       name="animalSize"
                       render={({ field }) => (
-                        <div className="relative w-full">
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <SelectTrigger className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none">
-                              <SelectValue placeholder="Porte" />
-                            </SelectTrigger>
-                            <SelectContent className="w-full">
-                              <SelectGroup className="font-bold text-[#A2A7A9]">
-                                <SelectItem value="PEQUENO">Pequeno</SelectItem>
-                                <SelectItem value="MEDIO">Médio</SelectItem>
-                                <SelectItem value="GRANDE">Grande</SelectItem>
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        </div>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger className="w-full rounded-[5px] border-none bg-[#F5F5F5] py-2 font-bold text-[#A2A7A9] focus:outline-none">
+                            <SelectValue placeholder="Porte" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup className="font-bold text-[#A2A7A9]">
+                              <SelectItem value="PEQUENO">Pequeno</SelectItem>
+                              <SelectItem value="MEDIO">Médio</SelectItem>
+                              <SelectItem value="GRANDE">Grande</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
                       )}
                     />
                   </div>
@@ -221,7 +226,7 @@ export default function SectionCadastroPet() {
                             type="text"
                             id="state"
                             placeholder="Estado"
-                            className="rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
+                            className="rounded-[5px] border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
                             {...field}
                           />
                         </div>
@@ -239,7 +244,7 @@ export default function SectionCadastroPet() {
                             type="text"
                             id="city"
                             placeholder="Cidade"
-                            className="rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
+                            className="rounded-[5px] border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
                             {...field}
                           />
                         </div>
@@ -287,16 +292,16 @@ export default function SectionCadastroPet() {
                             accept="image/*"
                             onChange={(e) => {
                               handleImageChange(e)
-                              field.onChange(e) // Atualiza o campo com o arquivo selecionado
+                              field.onChange(e.target.files) // Atualiza o campo com o arquivo selecionado
                             }}
                           />
                           <Input
                             type="text"
                             value={selectedImage} // Exibe o nome do arquivo selecionado
                             placeholder="Selecionar foto do pet"
-                            className="w-full rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9] md:w-[250px]"
+                            className="w-full rounded-[5px] border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9] md:w-[250px]"
                             onClick={() =>
-                              document.getElementById('photoAnimal').click()
+                              document.getElementById('photoAnimal')!.click()
                             }
                             readOnly
                           />
@@ -424,20 +429,19 @@ export default function SectionCadastroPet() {
                       />
                     </div>
                   </div>
-
-                  <div className="mt-5 flex flex-col items-center justify-center">
-                    <Button
-                      type="submit"
-                      className="h-[50px] w-full rounded-[20px] bg-[#01377D] font-bold text-white shadow-sm hover:bg-[#012452] md:w-[280px]"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        'Cadastrar'
-                      )}
-                    </Button>
-                  </div>
+                </div>
+                <div className="mt-5 flex flex-col items-center justify-center">
+                  <Button
+                    type="submit"
+                    className="h-[50px] w-full rounded-[20px] bg-[#01377D] font-bold text-white shadow-sm hover:bg-[#012452] md:w-[280px]"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      'Cadastrar'
+                    )}
+                  </Button>
                 </div>
               </form>
             </Form>

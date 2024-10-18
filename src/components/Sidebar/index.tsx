@@ -43,8 +43,8 @@ export function Sidebar() {
                   key={'link_' + index}
                   className={`flex w-full justify-start bg-transparent text-right text-lg font-medium ${
                     pathname === link.url
-                      ? 'rounded-[12px] bg-transparent font-semibold text-[#01377D] hover:shadow-md'
-                      : 'text-[#A5B0D0] hover:shadow-md'
+                      ? 'rounded-[12px] bg-transparent font-semibold text-[#01377D] hover:bg-transparent hover:text-[#01377dbd] hover:shadow-md'
+                      : 'text-[#A5B0D0] hover:bg-transparent hover:text-[#a5b0d0d4] hover:shadow-md'
                   }`}
                   onClick={() => handleNavigation(link.url)}
                 >

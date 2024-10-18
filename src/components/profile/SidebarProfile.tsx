@@ -35,7 +35,7 @@ export function NavProfile() {
     },
     {
       icon: <FaPaw size={18} className="text-[#01377D]" />,
-      url: '/animalsProfile',
+      url: '/animals-profile',
     },
   ]
 
@@ -50,7 +50,7 @@ export function NavProfile() {
       await deleteUserData(userId)
       toast.success('Conta desativada com sucesso!')
       await signOut({
-        callbackUrl: "/"
+        callbackUrl: '/',
       })
     } catch (error) {
       toast.error('Erro ao desativar a conta. Tente novamente.')

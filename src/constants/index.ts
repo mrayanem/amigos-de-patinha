@@ -1,7 +1,7 @@
 export const Backlinks = [
   { title: 'Home', url: '/' },
   { title: 'Sobre nós', url: '/about' },
-  { title: 'Adoção', url: '/pets' },
+  { title: 'Adoção', url: '/adoption' },
 ]
 
 export const AdminBacklinks = [

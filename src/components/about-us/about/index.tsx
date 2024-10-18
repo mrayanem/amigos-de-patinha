@@ -45,8 +45,8 @@ export default function AboutUs() {
       <section className="px-4 py-20">
         <FadeInSection>
           <div className="mx-auto flex max-w-[1400px] flex-col items-center">
-            <div className="flex flex-row gap-x-10">
-              <div className="flex w-1/2 flex-col justify-center">
+            <div className="flex flex-row items-center gap-x-10">
+              <div className="flex w-1/2 flex-col items-start justify-center">
                 <h2 className="pb-2 text-2xl font-semibold text-[#152336]">
                   Adotar é mais do que um ato de amor...
                 </h2>

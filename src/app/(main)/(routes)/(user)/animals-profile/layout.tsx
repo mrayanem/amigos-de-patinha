@@ -10,17 +10,17 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  // const session = await getServerSession(nextAuthOptions)
+  const session = await getServerSession(nextAuthOptions)
 
-  // if (!session) {
-  //   redirect('/login')
-  //   return null
-  // }
+  if (!session) {
+    redirect('/login')
+    return null
+  }
 
-  // if (session.user.role !== 'client' && session.user.role !== 'admin') {
-  //   redirect('/')
-  //   return null
-  // }
+  if (session.user.role !== 'client' && session.user.role !== 'admin') {
+    redirect('/')
+    return null
+  }
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif' }}>

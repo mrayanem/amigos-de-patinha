@@ -28,14 +28,14 @@ const fetchUserData = async (userId: string) => {
 export default function Profile() {
   const { data: session, status } = useSession()
   const userId = session?.user?.id
-    
-  
+
   const {
-    data: user, error, isLoading,
-} = useQuery<User, Error>(['user', userId], () => fetchUserData(userId!), {
+    data: user,
+    error,
+    isLoading,
+  } = useQuery<User, Error>(['user', userId], () => fetchUserData(userId!), {
     enabled: !!userId,
   })
-
 
   // if (isPending) {
   //   return <div>Carregando...</div>
@@ -52,8 +52,8 @@ export default function Profile() {
   return (
     <section className="flex h-screen items-center justify-center bg-zinc-100 px-4 pb-10">
       <div className="mx-auto flex w-[1200px] flex-col rounded-[10px] bg-white px-10 py-20">
-        {!isLoading ?
-          (<div className="grid w-full grid-cols-2 gap-5">
+        {!isLoading ? (
+          <div className="grid w-full grid-cols-2 gap-5">
             <div className="flex items-center justify-center">
               <Image
                 src="/profile-user.svg"
@@ -66,12 +66,16 @@ export default function Profile() {
             <div className="flex flex-col justify-center">
               <div className="flex flex-col pb-5">
                 <p className="text-lg font-light text-black">Nome:</p>
-                <span className="font-normal text-[#50585c7e]">{user?.name}</span>
+                <span className="font-normal text-[#50585c7e]">
+                  {user?.name}
+                </span>
               </div>
 
               <div className="flex flex-col pb-5">
                 <p className="text-lg font-light text-black">E-mail:</p>
-                <span className="font-normal text-[#50585c7e]">{user?.email}</span>
+                <span className="font-normal text-[#50585c7e]">
+                  {user?.email}
+                </span>
               </div>
 
               <div className="flex flex-col pb-5">
@@ -94,8 +98,10 @@ export default function Profile() {
                 </Button>
               </Link>
             </div>
-          </div>)
-        : (<div>Carregando...</div>)}
+          </div>
+        ) : (
+          <div>Carregando...</div>
+        )}
       </div>
     </section>
   )

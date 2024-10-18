@@ -5,9 +5,9 @@ export type CreateAnimal = {
   animalSize: string
   state: string
   city: string
-  description?: string
-  photoAnimal: string
-  specieId: string
+  description: string
+  photoAnimal: File
+  specie: 'GATO' | 'CACHORRO'
 }
 
 export type AnimalList = CreateAnimal[]

@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import '@fontsource/poppins'
-
 import {
   NextAuthSessionProvider,
   ReactQueryProvider,
@@ -33,14 +32,11 @@ export default async function RootLayout({
         className="bg-[#F4F9FF]"
         style={{ fontFamily: 'Poppins, sans-serif' }}
       >
-        <div className="grid-app grid min-h-screen">
-          <Sidebar />
-          <NextAuthSessionProvider>
-            <ReactQueryProvider>
-              <main className="">{children}</main>
-            </ReactQueryProvider>
-          </NextAuthSessionProvider>
-        </div>
+        <NextAuthSessionProvider session={session}>
+          <ReactQueryProvider>
+            <main className="">{children}</main>
+          </ReactQueryProvider>
+        </NextAuthSessionProvider>
       </div>
     </>
   )

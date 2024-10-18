@@ -1,10 +1,7 @@
 'use client'
 
-import { Button } from '../ui/button'
-import { Input } from '../ui/input'
 import { FaCity, FaHouseUser, FaUserAlt } from 'react-icons/fa'
 import { useForm } from 'react-hook-form'
-import { Form, FormField } from '../ui/form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Loader2, LockKeyhole, Mail, Phone } from 'lucide-react'
@@ -14,6 +11,9 @@ import { useRegister } from '@/client/auth'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { Label } from '@radix-ui/react-label'
+import { Form, FormField } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 const formSchema = z
   .object({
@@ -26,7 +26,9 @@ const formSchema = z
       .email('Insira um email válido'),
     password: z.string({ required_error: 'Insira uma senha' }),
     confirmPassword: z.string({ required_error: 'Confirme sua senha' }),
-    role: z.string({ required_error: 'Insira a role' }),
+    role: z.enum(['client', 'admin'], {
+      required_error: 'Selecione uma função',
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'As senhas não correspondem',
@@ -53,10 +55,10 @@ export default function SectionCadastroAdmin() {
   }
 
   return (
-    <section className="bg-[#f7f4f4] px-4 py-10 md:py-[110px]">
-      <div className="mx-auto flex max-w-[1000px] flex-col items-center">
-        <div className="flex h-auto w-full flex-col items-center justify-center self-center rounded-[20px] bg-white shadow-2xl md:h-[530px]">
-          <div className="flex-flex-col h-auto w-full max-w-[500px] items-center justify-center self-center">
+    <section className="flex h-screen w-full flex-col items-center justify-center self-center bg-[#f7f4f4]">
+      <div className="flex h-full w-full max-w-[1000px] flex-col items-center justify-center self-center">
+        <div className="flex h-auto w-full flex-col items-center justify-center rounded-[20px] bg-white shadow-2xl md:h-[530px]">
+          <div className="flex h-auto w-full max-w-[500px] flex-col items-center justify-center">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="mb-[50px] flex flex-col items-center justify-center">
@@ -67,7 +69,7 @@ export default function SectionCadastroAdmin() {
                     Necessitamos dos seus dados para prosseguir
                   </span>
                 </div>
-                <div className="mb-5 flex flex-col gap-3">
+                <div className="mb-5 flex w-full flex-col gap-3">
                   <div className="flex w-full flex-row gap-2">
                     <FormField
                       control={form.control}
@@ -205,29 +207,55 @@ export default function SectionCadastroAdmin() {
                     />
                   </div>
                   <div className="w-full">
-                    <RadioGroup defaultValue="comfortable">
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="default" id="r1" />
-                        <Label htmlFor="r1">Default</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="comfortable" id="r2" />
-                        <Label htmlFor="r2">Comfortable</Label>
+                    <Label className="text-md mb-2 font-semibold text-[#A2A7A9]">
+                      Selecione seu papel:
+                    </Label>
+                    <RadioGroup
+                      defaultValue="client"
+                      onValueChange={(value) => form.setValue('role', value)}
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className="flex items-center">
+                          <RadioGroupItem
+                            value="client"
+                            id="client"
+                            className="border-zinc-500 text-[#A2A7A9]"
+                          />
+                          <Label
+                            htmlFor="client"
+                            className="ml-2 text-[#A2A7A9]"
+                          >
+                            Cliente
+                          </Label>
+                        </div>
+                        <div className="flex items-center">
+                          <RadioGroupItem
+                            value="admin"
+                            id="admin"
+                            className="border-zinc-500 text-[#A2A7A9]"
+                          />
+                          <Label
+                            htmlFor="admin"
+                            className="ml-2 text-[#A2A7A9]"
+                          >
+                            Administrador
+                          </Label>
+                        </div>
                       </div>
                     </RadioGroup>
                   </div>
-                  <div className="mt-5 flex flex-col items-center justify-center">
-                    <Button
-                      type="submit"
-                      className="h-[50px] w-full rounded-[20px] bg-[#01377D] font-bold text-white shadow-sm hover:bg-[#012452] md:w-[280px]"
-                    >
-                      {isLoading ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        'Criar conta'
-                      )}
-                    </Button>
-                  </div>
+                </div>
+                <div className="mt-5 flex flex-col items-center">
+                  <Button
+                    type="submit"
+                    className="text-md h-[45px] w-full rounded-[20px] bg-[#01377D] font-bold text-white shadow-sm hover:bg-[#012452] md:w-[280px]"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      'Cadastrar'
+                    )}
+                  </Button>
                 </div>
               </form>
             </Form>

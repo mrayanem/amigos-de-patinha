@@ -74,9 +74,9 @@ export default function SectionLogin() {
   }
 
   return (
-    <section className="bg-[#cedbec] px-4 py-10 md:py-[110px]">
-      <div className="mx-auto flex max-w-[1100px] flex-col items-center">
-        <div className="flex h-auto w-full flex-col items-center justify-between self-center rounded-[20px] bg-white shadow-2xl md:h-[530px] md:flex-row">
+    <section className="flex h-screen w-full flex-col items-center justify-center bg-[#cedbec]">
+      <div className="mx-auto flex w-full max-w-[1100px] flex-col items-center justify-center">
+        <div className="flex h-auto w-full flex-row items-center justify-between rounded-[20px] bg-white shadow-2xl md:h-[530px]">
           <div className="flex h-full w-full flex-col items-center justify-center rounded-t-[20px] bg-[#01377D] px-6 py-5 text-center text-white md:max-w-[300px] md:rounded-l-[20px] md:rounded-r-none md:py-0">
             <h2 className="text-[34px] font-bold">Crie sua conta</h2>
             <span className="text-sm font-medium">
@@ -102,7 +102,7 @@ export default function SectionLogin() {
                     Conecte-se novamente!
                   </span>
                 </div>
-                <div className="mb-5 flex flex-col gap-3">
+                <div className="mb-5 flex w-full flex-col gap-3">
                   <div className="w-full">
                     <FormField
                       control={form.control}
