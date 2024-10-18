@@ -76,8 +76,15 @@ export default function SectionCadastroPet() {
   })
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values)
-    createAnimal(values, {
+    const formData = new FormData()
+    Object.entries(values).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((item) => formData.append(key, item))
+      } else {
+        formData.append(key, value)
+      }
+    })
+    createAnimal(formData, {
       onSuccess: () => {
         toast.success('Cadastro realizado com sucesso!')
         router.replace('/')
@@ -124,13 +131,13 @@ export default function SectionCadastroPet() {
                           type="text"
                           id="name"
                           placeholder="Nome do pet"
-                          className="rounded-[5px] border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
+                          className="w-full rounded-[5px] border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
                           {...field}
                         />
                       </div>
                     )}
                   />
-                  <div className="flex w-full flex-row items-center gap-2">
+                  <div className="flex w-full flex-row gap-2">
                     <FormField
                       control={form.control}
                       name="specie"
@@ -185,7 +192,7 @@ export default function SectionCadastroPet() {
                             type="text"
                             id="age"
                             placeholder="Idade"
-                            className="rounded-[5px] border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
+                            className="w-full rounded-[5px] border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
                             {...field}
                           />
                         </div>
@@ -226,7 +233,7 @@ export default function SectionCadastroPet() {
                             type="text"
                             id="state"
                             placeholder="Estado"
-                            className="rounded-[5px] border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
+                            className="w-full rounded-[5px] border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
                             {...field}
                           />
                         </div>
@@ -244,7 +251,7 @@ export default function SectionCadastroPet() {
                             type="text"
                             id="city"
                             placeholder="Cidade"
-                            className="rounded-[5px] border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
+                            className="w-full rounded-[5px] border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
                             {...field}
                           />
                         </div>
@@ -261,7 +268,7 @@ export default function SectionCadastroPet() {
                           <Textarea
                             id="description"
                             placeholder="Descrição do animal"
-                            className="h-[45px] rounded-[5px] border-none bg-[#F5F5F5] font-bold text-[#A2A7A9]"
+                            className="h-[45px] w-full rounded-[5px] border-none bg-[#F5F5F5] font-bold text-[#A2A7A9]"
                             {...field}
                           />
                         </div>
@@ -269,6 +276,7 @@ export default function SectionCadastroPet() {
                     />
                   </div>
                 </div>
+
                 <div className="mb-5 flex flex-col">
                   <span className="text-sm font-semibold text-[#A2A7A9]">
                     Vive bem em
@@ -437,7 +445,7 @@ export default function SectionCadastroPet() {
                     disabled={isLoading}
                   >
                     {isLoading ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="mr-2 h-4 animate-spin" />
                     ) : (
                       'Cadastrar'
                     )}

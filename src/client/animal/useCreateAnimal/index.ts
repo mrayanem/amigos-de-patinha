@@ -4,8 +4,8 @@ import { useMutation } from 'react-query'
 
 async function postAnimal(payload: CreateAnimal) {
   console.log(payload)
-  // const response = await api.postForm('/animals', payload)
-  // return response.data
+  const response = await api.postForm('/animals', payload)
+  return response.data
 }
 
 export function useCreateAnimal() {
