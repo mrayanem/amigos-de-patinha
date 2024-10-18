@@ -2,9 +2,9 @@ import { api } from '@/client'
 import { CreateAnimal } from '../types'
 import { useMutation } from 'react-query'
 
-async function postAnimal(payload: CreateAnimal) {
-  console.log(payload)
-  const response = await api.postForm('/animals', payload)
+async function postAnimal({ photoAnimal, ...rest }: CreateAnimal) {
+  const data = JSON.stringify({...rest})
+  const response = await api.postForm('/animals', { photoAnimal: photoAnimal[0], data })
   return response.data
 }
 

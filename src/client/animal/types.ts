@@ -6,7 +6,7 @@ export type CreateAnimal = {
   state: string
   city: string
   description: string
-  photoAnimal: File
+  photoAnimal: FileList
   specie: 'GATO' | 'CACHORRO'
 }
 

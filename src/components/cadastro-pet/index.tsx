@@ -45,16 +45,16 @@ const formSchema = z.object({
   }),
   description: z.string().nonempty('Insira a descrição'),
   photoAnimal: z
-    .any()
-    .refine((files) => files?.length > 0, 'Imagem é obrigatória.')
-    .refine(
-      (files) => files[0]?.size <= MAX_FILE_SIZE,
-      `O tamanho máximo do arquivo é 5MB.`,
-    )
-    .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files[0]?.type),
-      '.jpg, .jpeg, .png e .webp são aceitos.',
-    ),
+  .custom<FileList>()
+  .refine((files) => files?.length == 1, "Image is required.")
+  .refine(
+    (files) => files?.[0]?.size <= MAX_FILE_SIZE,
+    `Max file size is 5MB.`
+  )
+  .refine(
+    (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+    ".jpg, .jpeg, .png and .webp files are accepted."
+  ),
   livesWellIn: z
     .array(z.enum(['APARTAMENTO', 'CASA']))
     .nonempty('Selecione pelo menos uma opção para "Vive bem em"'),
@@ -67,7 +67,7 @@ const formSchema = z.object({
 })
 
 export default function SectionCadastroPet() {
-  const [selectedImage, setSelectedImage] = useState('')
+  const [selectedImage, setSelectedImage] = useState<File | null>()
   const router = useRouter()
   const { createAnimal, isLoading } = useCreateAnimal()
 
@@ -76,15 +76,7 @@ export default function SectionCadastroPet() {
   })
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    const formData = new FormData()
-    Object.entries(values).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach((item) => formData.append(key, item))
-      } else {
-        formData.append(key, value)
-      }
-    })
-    createAnimal(formData, {
+    createAnimal(values, {
       onSuccess: () => {
         toast.success('Cadastro realizado com sucesso!')
         router.replace('/')
@@ -96,10 +88,10 @@ export default function SectionCadastroPet() {
   }
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files[0]
+    const file = e.target.files
     if (file) {
-      setSelectedImage(file.name) // Atualiza o estado com o nome do arquivo selecionado
-      form.setValue('photoAnimal', file) // Atualiza o campo com o arquivo
+      setSelectedImage(file[0])
+      form.setValue("photoAnimal", file)
     }
   }
 
@@ -305,7 +297,7 @@ export default function SectionCadastroPet() {
                           />
                           <Input
                             type="text"
-                            value={selectedImage} // Exibe o nome do arquivo selecionado
+                            value={selectedImage?.name} // Exibe o nome do arquivo selecionado
                             placeholder="Selecionar foto do pet"
                             className="w-full rounded-[5px] border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9] md:w-[250px]"
                             onClick={() =>
