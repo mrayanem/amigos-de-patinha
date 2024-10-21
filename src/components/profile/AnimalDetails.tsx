@@ -154,9 +154,9 @@ export default function ProfileAnimal() {
                 >
                   Salvar
                 </Button>
-                <Link className="w-full" href="/animals-details">
+                <Link className="w-full" href="/animals-profile">
                   <Button className="w-full border border-[#01377D] bg-transparent text-lg text-[#01377D] hover:border-[#01377d97] hover:bg-transparent hover:text-[#01377d97]">
-                    <Pen size={16} /> <span className="pl-2">Editar</span>
+                    <span className="pl-2">Cancelar</span>
                   </Button>
                 </Link>
               </div>
