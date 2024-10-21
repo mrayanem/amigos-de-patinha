@@ -39,60 +39,60 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
+import Image from 'next/image'
 
-// Definindo a interface para o usuário
-interface User {
+// Definindo a interface para o animal
+interface Animal {
   id: string
   name: string
-  email: string
+  user: string
   status: boolean
-  createdAt: string // Supondo que você tenha uma data de criação
+  createdAt: string
+  photoAnimal: string
 }
 
 export default function AnimalsTable() {
-  const [users, setUsers] = useState<User[]>([])
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([])
+  const [animals, setAnimals] = useState<Animal[]>([])
+  const [filteredAnimals, setFilteredAnimals] = useState<Animal[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
-  const itemsPerPage = 3 // Alterado para 3 usuários por página
+  const itemsPerPage = 3
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchAnimals = async () => {
       try {
-        const response = await api.get('/users')
-        setUsers(response.data)
-        setFilteredUsers(response.data) // Inicialmente, todos os usuários são filtrados
+        const response = await api.get('/animals')
+        setAnimals(response.data)
+        setFilteredAnimals(response.data)
       } catch (error) {
-        console.error('Erro ao buscar usuários:', error)
-        toast.error('Erro ao buscar usuários.')
+        console.error('Erro ao buscar animais:', error)
+        toast.error('Erro ao buscar animais.')
       }
     }
-    fetchUsers()
+    fetchAnimals()
   }, [])
 
-  console.log(users)
-
   useEffect(() => {
-    const filtered = users.filter((user) => {
-      const userDate = new Date(user.createdAt)
+    const filtered = animals.filter((animal) => {
+      const animalDate = new Date(animal.createdAt)
       const isDateMatch = selectedDate
-        ? userDate.toDateString() === selectedDate.toDateString()
+        ? animalDate.toDateString() === selectedDate.toDateString()
         : true
 
       return (
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        animal.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
         isDateMatch
       )
     })
 
-    setFilteredUsers(filtered)
-    setCurrentPage(1) // Reseta a página para 1 quando o filtro é aplicado
-  }, [searchTerm, selectedDate, users])
+    setFilteredAnimals(filtered)
+    setCurrentPage(1)
+  }, [searchTerm, selectedDate, animals])
 
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
+  const totalPages = Math.ceil(filteredAnimals.length / itemsPerPage)
 
-  const currentUsers = filteredUsers.slice(
+  const currentAnimals = filteredAnimals.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   )
@@ -154,18 +154,28 @@ export default function AnimalsTable() {
             <TableRow>
               <TableHead className="w-[100px]">Foto do Animal</TableHead>
               <TableHead>Nome do Animal</TableHead>
-              <TableHead>Doador do Animal</TableHead>
+              <TableHead>ID do Doador</TableHead>
               <TableHead>Status do Animal</TableHead>
               <TableHead>Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentUsers.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="text-xs font-normal">{user.id}</TableCell>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.status ? 'ativo' : 'inativo'}</TableCell>
+            {currentAnimals.map((animal) => (
+              <TableRow key={animal.id}>
+                <TableCell className="text-xs font-normal">
+                  <Image
+                    src={animal.photoAnimal}
+                    alt={animal.name}
+                    width={40}
+                    height={40}
+                    className="rounded-[5px] object-cover"
+                  />
+                </TableCell>
+                <TableCell>{animal.name}</TableCell>
+                <TableCell>{animal.user}</TableCell>
+                <TableCell>
+                  {animal.status ? 'para doação' : 'adotado'}
+                </TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -180,7 +190,7 @@ export default function AnimalsTable() {
                       <DropdownMenuLabel>Opções</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        onClick={() => copyToClipboard(user.id)}
+                        onClick={() => copyToClipboard(animal.id)}
                       >
                         Copiar ID
                       </DropdownMenuItem>

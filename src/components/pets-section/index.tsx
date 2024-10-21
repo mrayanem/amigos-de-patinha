@@ -1,7 +1,33 @@
+'use client'
+
 import Image from 'next/image'
 import { Button } from '../ui/button'
+import { useEffect, useState } from 'react'
+import { api } from '@/client'
+
+interface Animal {
+  id: string
+  name: string
+  state: string
+  city: string
+  photoAnimal: string
+}
 
 export default function PetsHome() {
+  const [animals, setAnimals] = useState<Animal[]>([])
+
+  useEffect(() => {
+    const fetchAnimals = async () => {
+      try {
+        const response = await api.get('/animals')
+        setAnimals(response.data)
+      } catch (error) {
+        console.error('Erro ao buscar animais:', error)
+      }
+    }
+    fetchAnimals()
+  }, [])
+
   return (
     <>
       <section className="px-4 pb-10 pt-10 md:pb-20">
@@ -14,24 +40,29 @@ export default function PetsHome() {
               Aqui, você encontrará gatinhos e cachorrinhos à espera de um lar.
             </span>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4 py-16">
-            <div className="flex h-[292px] w-[250px] flex-col rounded-[10px] border border-[#615e5e43] shadow-2xl">
-              <div className="relative h-[226px] w-full overflow-hidden rounded-t-[10px]">
-                <Image
-                  priority
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  alt="NextUI hero Image"
-                  src="/grid-home/gato1.png"
-                />
+          <div className="grid grid-cols-4 gap-4 py-16">
+            {animals.slice(0, 8).map((animal) => (
+              <div
+                key={animal.id}
+                className="flex h-[292px] w-[250px] flex-col rounded-[10px] border border-[#615e5e43] shadow-2xl"
+              >
+                <div className="relative h-[226px] w-full overflow-hidden rounded-t-[10px]">
+                  <Image
+                    priority
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    alt={animal.name}
+                    src={animal.photoAnimal}
+                  />
+                </div>
+                <div className="flex flex-col p-2">
+                  <span className="text-lg font-semibold text-[#01377D]">
+                    {animal.name}
+                  </span>
+                  <span>{`${animal.city}, ${animal.state}`}</span>
+                </div>
               </div>
-              <div className="flex flex-col p-2">
-                <span className="text-lg font-semibold text-[#01377D]">
-                  neneco
-                </span>
-                <span>São Paulo, Cotia</span>
-              </div>
-            </div>
+            ))}
           </div>
           <div className="flex flex-col items-center justify-center">
             <Button className="h-[50px] w-[190px] rounded-[17px] bg-[#01377D] text-xl font-medium text-white">
