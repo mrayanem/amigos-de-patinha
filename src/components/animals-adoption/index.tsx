@@ -19,10 +19,10 @@ import {
 } from '@/components/ui/pagination'
 import { useEffect, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
-import { Button } from '../ui/button'
 import Image from 'next/image'
 import { api } from '@/client'
 import Link from 'next/link'
+import { Button } from '../ui/button'
 
 interface Animal {
   id: string
@@ -38,18 +38,30 @@ interface Animal {
   description: string
   photoAnimal: string
   created_at: string
+  status: boolean
 }
+
+const CircleLoader = () => (
+  <div className="animate-spin rounded-full border-4 border-t-4 border-[#01377D] w-6 h-6"></div>
+);
 
 export default function AdoptionSection() {
   const [animals, setAnimals] = useState<Animal[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const animalsPerPage = 8
 
+  const [selectedSpecie, setSelectedSpecie] = useState<string>('')
+  const [selectedSex, setSelectedSex] = useState<string>('')
+  const [selectedSize, setSelectedSize] = useState<string>('')
+
+  const [isLoading, setIsLoading] = useState(false)
+
   useEffect(() => {
     const fetchAnimals = async () => {
       try {
         const response = await api.get('/animals')
-        setAnimals(response.data)
+        const filteredAnimals = response.data.filter((animal: Animal) => animal.status === true)
+        setAnimals(filteredAnimals)
       } catch (error) {
         console.error('Erro ao buscar animais:', error)
       }
@@ -59,9 +71,24 @@ export default function AdoptionSection() {
 
   const indexOfLastAnimal = currentPage * animalsPerPage
   const indexOfFirstAnimal = indexOfLastAnimal - animalsPerPage
-  const currentAnimals = animals.slice(indexOfFirstAnimal, indexOfLastAnimal)
 
-  const totalPages = Math.ceil(animals.length / animalsPerPage)
+  const filteredAnimals = animals.filter(animal => {
+    const matchesSpecie = selectedSpecie ? animal.specie === selectedSpecie : true
+    const matchesSex = selectedSex ? animal.sex === selectedSex : true
+    const matchesSize = selectedSize ? animal.animalSize === selectedSize : true
+    return matchesSpecie && matchesSex && matchesSize
+  })
+
+  const currentAnimals = filteredAnimals.slice(indexOfFirstAnimal, indexOfLastAnimal)
+  const totalPages = Math.ceil(filteredAnimals.length / animalsPerPage)
+
+  const handleSearch = () => {
+    setCurrentPage(1)
+    setIsLoading(true) 
+    setTimeout(() => {
+      setIsLoading(false)
+    }, 1000); 
+  }
 
   return (
     <section className="flex h-screen w-full flex-col">
@@ -73,42 +100,42 @@ export default function AdoptionSection() {
         </div>
 
         <div className="flex w-full flex-row items-center gap-16 rounded-[10px] border-2 border-[#01377D] bg-transparent p-10">
-          <Select>
+          <Select onValueChange={setSelectedSpecie}>
             <SelectTrigger className="w-full border border-[#01377D] bg-transparent">
               <SelectValue placeholder="Todas as espécies" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel className="text-md flex flex-row items-center text-[#4F4747]">
-                  Todas as espécies <ChevronDown size={18} />{' '}
+                  Todas as espécies <ChevronDown size={18} />
                 </SelectLabel>
                 <SelectItem value="GATO">Gato</SelectItem>
                 <SelectItem value="CACHORRO">Cachorro</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Select>
+          <Select onValueChange={setSelectedSex}>
             <SelectTrigger className="w-full border border-[#01377D] bg-transparent">
               <SelectValue placeholder="Todos os sexos" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel className="text-md flex flex-row items-center text-[#4F4747]">
-                  Todos os sexos <ChevronDown size={18} />{' '}
+                  Todos os sexos <ChevronDown size={18} />
                 </SelectLabel>
                 <SelectItem value="MACHO">Macho</SelectItem>
                 <SelectItem value="FEMEA">Fêmea</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Select>
+          <Select onValueChange={setSelectedSize}>
             <SelectTrigger className="w-full border border-[#01377D] bg-transparent">
               <SelectValue placeholder="Todos os portes" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel className="text-md flex flex-row items-center text-[#4F4747]">
-                  Todos os portes <ChevronDown size={18} />{' '}
+                  Todos os portes <ChevronDown size={18} />
                 </SelectLabel>
                 <SelectItem value="PEQUENO">Pequeno</SelectItem>
                 <SelectItem value="MEDIO">Médio</SelectItem>
@@ -116,8 +143,11 @@ export default function AdoptionSection() {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Button className="w-full bg-[#01377D] font-bold text-white shadow-sm hover:bg-[#012452]">
-            Pesquisar
+          <Button 
+            onClick={handleSearch} 
+            className="w-full bg-[#01377D] font-bold text-white shadow-sm hover:bg-[#012452] transition-transform"
+          >
+            {isLoading ? <CircleLoader/> : 'Pesquisar'}
           </Button>
         </div>
 
@@ -149,7 +179,6 @@ export default function AdoptionSection() {
           ))}
         </div>
 
-        {/* Adicionando espaçamento antes da paginação */}
         <div className="py-5" />
 
         <Pagination>

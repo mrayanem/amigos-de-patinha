@@ -11,6 +11,7 @@ interface Animal {
   state: string
   city: string
   photoAnimal: string
+  status: boolean
 }
 
 export default function PetsHome() {
@@ -20,7 +21,8 @@ export default function PetsHome() {
     const fetchAnimals = async () => {
       try {
         const response = await api.get('/animals')
-        setAnimals(response.data)
+        const filteredAnimals = response.data.filter((animal: Animal) => animal.status === true)
+        setAnimals(filteredAnimals)
       } catch (error) {
         console.error('Erro ao buscar animais:', error)
       }

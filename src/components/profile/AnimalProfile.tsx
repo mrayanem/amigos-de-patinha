@@ -17,6 +17,8 @@ import { MapPin, Pen } from 'lucide-react'
 import Link from 'next/link'
 import { api } from '@/client'
 import { useSession } from 'next-auth/react'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 interface Animal {
   id: string
@@ -40,15 +42,12 @@ export default function ProfileAnimal() {
   useEffect(() => {
     const fetchAnimals = async () => {
       try {
-        
         const response = await api.get('/animals-user/' + session?.user.id)
-        console.log(response)
         setAnimals(response.data)
       } catch (error) {
         console.error('Erro ao buscar animais:', error)
       }
     }
-    console.log(session?.user.id)
     if (session?.user.id) fetchAnimals()
   }, [session?.user])
 
@@ -60,6 +59,23 @@ export default function ProfileAnimal() {
   const currentAnimals = animals.slice(indexOfFirstAnimal, indexOfLastAnimal)
 
   const totalPages = Math.ceil(animals.length / animalsPerPage)
+
+  const [adoptedAnimals, setAdoptedAnimals] = useState<Set<string>>(new Set())
+
+  const handleAdopt = async (animalId: string) => {
+    if (adoptedAnimals.has(animalId)) {
+      toast.warn('Este animal já foi adotado!')
+      return
+    }
+
+    try {
+      await api.delete("/animal/" + animalId)
+      toast.success('Animal adotado com sucesso!')
+      setAdoptedAnimals((prev) => new Set(prev).add(animalId))
+    } catch (error) {
+      toast.error('Erro ao adotar o animal.')
+    }
+  }
 
   return (
     <section className="flex h-screen items-center justify-center bg-zinc-100 px-4">
@@ -131,9 +147,7 @@ export default function ProfileAnimal() {
                     <Pen size={16} /> <span className="pl-2">Editar</span>
                   </Button>
                 </Link>
-                <Button onClick={() => {
-                  api.delete("/animal/" + animal.id)
-                }} className="w-full border bg-[#01377D] text-lg text-white hover:bg-[#01377d97]">
+                <Button onClick={() => handleAdopt(animal.id)} className="w-full border bg-[#01377D] text-lg text-white hover:bg-[#01377d97]">
                   Adotado
                 </Button>
               </div>

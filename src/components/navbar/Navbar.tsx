@@ -37,20 +37,19 @@ export function Navbar() {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem>
-              <Link href="/cadastro-pet" passHref>
-                Cadastrar animal
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>Conta</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
               <Link href="/profile" passHref>
-                Editar perfil
+                Conta
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Link href="/profile-details" passHref>
-                Alterar senha
+                Editar perfil
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Link href="/cadastro-pet" passHref>
+                Cadastrar animal
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />

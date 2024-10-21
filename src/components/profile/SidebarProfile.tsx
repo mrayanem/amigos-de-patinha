@@ -16,6 +16,7 @@ import {
 import { api } from '@/client'
 import { useSession, signOut } from 'next-auth/react'
 import { toast } from 'react-toastify'
+import Link from 'next/link'
 
 const deleteUserData = async (userId: string) => {
   const response = await api.delete(`/user/${userId}`)
@@ -88,6 +89,11 @@ export function NavProfile() {
                 <DropdownMenuContent>
                   <DropdownMenuLabel>Opções</DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <Link href={'/'}>        
+                  <DropdownMenuItem>
+                    Home
+                  </DropdownMenuItem>
+                  </Link>
                   <DropdownMenuItem onClick={handleDeactivateAccount}>
                     Desativar conta
                   </DropdownMenuItem>
