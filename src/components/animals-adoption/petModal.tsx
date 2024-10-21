@@ -3,7 +3,7 @@
 import { Mail, Phone } from 'lucide-react'
 import Image from 'next/image'
 
-export function ModalPet() {
+export function ModalPet(props: { email: string; telephone: string }) {
   return (
     <div className="flex h-auto w-full flex-col justify-center p-10">
       <div className="mb-2 flex flex-row items-center gap-2">
@@ -24,10 +24,10 @@ export function ModalPet() {
       </div>
       <div className="flex flex-col pl-14 text-lg font-medium">
         <span className="flex flex-row items-center gap-2">
-          <Mail size={20} className="text-[#7FD349]" /> fulano@gmail.com
+          <Mail size={20} className="text-[#7FD349]" /> {props.email}
         </span>
         <span className="flex flex-row items-center gap-2">
-          <Phone size={20} className="text-[#7FD349]" /> (11) 99999-9999
+          <Phone size={20} className="text-[#7FD349]" /> {props.telephone}
         </span>
       </div>
     </div>

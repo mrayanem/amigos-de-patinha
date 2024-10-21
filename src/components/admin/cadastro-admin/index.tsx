@@ -7,13 +7,13 @@ import { z } from 'zod'
 import { Loader2, LockKeyhole, Mail, Phone } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { useRegister } from '@/client/auth'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { Label } from '@radix-ui/react-label'
 import { Form, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { useUsers } from '@/client/auth/useUsers'
 
 const formSchema = z
   .object({
@@ -37,7 +37,7 @@ const formSchema = z
 
 export default function SectionCadastroAdmin() {
   const router = useRouter()
-  const { createUser, isLoading } = useRegister()
+  const { createUser, isLoading } = useUsers()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   })
@@ -49,7 +49,7 @@ export default function SectionCadastroAdmin() {
         router.replace('/')
       },
       onError: () => {
-        toast.error('Erro ao criar usuário')
+        toast.error('Erro ao criar administrador')
       },
     })
   }
@@ -63,7 +63,7 @@ export default function SectionCadastroAdmin() {
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="mb-[50px] flex flex-col items-center justify-center">
                   <h2 className="text-4xl font-bold text-[#01377D]">
-                    Cadastre-se
+                    Cadastre um admin
                   </h2>
                   <span className="text-md font-semibold text-[#A2A7A9]">
                     Necessitamos dos seus dados para prosseguir
@@ -205,44 +205,6 @@ export default function SectionCadastroAdmin() {
                         </div>
                       )}
                     />
-                  </div>
-                  <div className="w-full">
-                    <Label className="text-md mb-2 font-semibold text-[#A2A7A9]">
-                      Selecione seu papel:
-                    </Label>
-                    <RadioGroup
-                      defaultValue="client"
-                      onValueChange={(value) => form.setValue('role', value)}
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center">
-                          <RadioGroupItem
-                            value="client"
-                            id="client"
-                            className="border-zinc-500 text-[#A2A7A9]"
-                          />
-                          <Label
-                            htmlFor="client"
-                            className="ml-2 text-[#A2A7A9]"
-                          >
-                            Cliente
-                          </Label>
-                        </div>
-                        <div className="flex items-center">
-                          <RadioGroupItem
-                            value="admin"
-                            id="admin"
-                            className="border-zinc-500 text-[#A2A7A9]"
-                          />
-                          <Label
-                            htmlFor="admin"
-                            className="ml-2 text-[#A2A7A9]"
-                          >
-                            Administrador
-                          </Label>
-                        </div>
-                      </div>
-                    </RadioGroup>
                   </div>
                 </div>
                 <div className="mt-5 flex flex-col items-center">

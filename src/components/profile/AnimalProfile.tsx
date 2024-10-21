@@ -16,6 +16,7 @@ import { FaUserAlt } from 'react-icons/fa'
 import { MapPin, Pen } from 'lucide-react'
 import Link from 'next/link'
 import { api } from '@/client'
+import { useSession } from 'next-auth/react'
 
 interface Animal {
   id: string
@@ -33,19 +34,23 @@ interface Animal {
 }
 
 export default function ProfileAnimal() {
+  const { data: session } = useSession()
   const [animals, setAnimals] = useState<Animal[]>([])
 
   useEffect(() => {
     const fetchAnimals = async () => {
       try {
-        const response = await api.get('/animals')
+        
+        const response = await api.get('/animals-user/' + session?.user.id)
+        console.log(response)
         setAnimals(response.data)
       } catch (error) {
         console.error('Erro ao buscar animais:', error)
       }
     }
-    fetchAnimals()
-  }, [])
+    console.log(session?.user.id)
+    if (session?.user.id) fetchAnimals()
+  }, [session?.user])
 
   const [currentPage, setCurrentPage] = useState(1)
   const animalsPerPage = 1
@@ -126,7 +131,9 @@ export default function ProfileAnimal() {
                     <Pen size={16} /> <span className="pl-2">Editar</span>
                   </Button>
                 </Link>
-                <Button className="w-full border bg-[#01377D] text-lg text-white hover:bg-[#01377d97]">
+                <Button onClick={() => {
+                  api.delete("/animal/" + animal.id)
+                }} className="w-full border bg-[#01377D] text-lg text-white hover:bg-[#01377d97]">
                   Adotado
                 </Button>
               </div>

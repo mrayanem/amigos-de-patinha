@@ -6,5 +6,3 @@ export type CreateUser = {
   state: string
   telephone?: string | null
 }
-
-export type UserList = CreateUser[]

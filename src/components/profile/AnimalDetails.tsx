@@ -17,6 +17,8 @@ import { MapPin, Pen } from 'lucide-react'
 import Link from 'next/link'
 import { Textarea } from '../ui/textarea'
 import { api } from '@/client'
+import { toast } from 'react-toastify'
+import { useSession } from 'next-auth/react'
 
 interface Animal {
   id: string
@@ -38,12 +40,13 @@ export default function ProfileAnimal() {
   const [animals, setAnimals] = useState<Animal[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const animalsPerPage = 1
+  const { data: session } = useSession()
   const [editedDescription, setEditedDescription] = useState<string>('')
 
   useEffect(() => {
     const fetchAnimals = async () => {
       try {
-        const response = await api.get('/animals')
+        const response = await api.get('/animals-user/' + session?.user.id)
         setAnimals(response.data)
         if (response.data.length > 0) {
           setEditedDescription(response.data[0].description) // Set initial description for editing
@@ -52,8 +55,8 @@ export default function ProfileAnimal() {
         console.error('Erro ao buscar animais:', error)
       }
     }
-    fetchAnimals()
-  }, [])
+    if (session?.user) fetchAnimals()
+  }, [session?.user])
 
   const indexOfLastAnimal = currentPage * animalsPerPage
   const indexOfFirstAnimal = indexOfLastAnimal - animalsPerPage
@@ -66,7 +69,7 @@ export default function ProfileAnimal() {
       await api.patch(`/animals/${animalId}`, {
         description: editedDescription,
       })
-      alert('Descrição atualizada com sucesso!')
+      toast.success('Descrição atualizada com sucesso!') 
     } catch (error) {
       console.error('Erro ao atualizar descrição:', error)
     }

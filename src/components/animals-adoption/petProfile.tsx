@@ -154,7 +154,7 @@ export default function AdoptionDetails({
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent className="max-w-xl border border-zinc-50 bg-white shadow-md">
           <div className="min-h-[280px] w-full">
-            <ModalPet />
+            <ModalPet {...animal.user} />
           </div>
         </DialogContent>
       </Dialog>

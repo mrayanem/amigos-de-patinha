@@ -4,6 +4,7 @@ import { useMutation } from 'react-query'
 
 async function postAnimal({ photoAnimal, ...rest }: CreateAnimal) {
   const data = JSON.stringify({ ...rest })
+  console.log(data)
   const response = await api.postForm('/animals', {
     photoAnimal: photoAnimal[0],
     data,
