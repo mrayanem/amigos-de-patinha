@@ -8,7 +8,9 @@ import { Button } from '../ui/button'
 import { useEffect, useState } from 'react'
 import { api } from '@/client'
 import { toast } from 'react-toastify'
-import { useSearchParams } from 'next/navigation' // Importando useSearchParams
+import { useParams, useSearchParams } from 'next/navigation'
+import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
+import { ModalPet } from './petModal'
 
 interface Animal {
   id: string
@@ -26,14 +28,25 @@ interface Animal {
   created_at: string
 }
 
-export default function AdoptionDetails() {
-  const [animal, setAnimal] = useState<Animal | null>(null)
-  const searchParams = useSearchParams()
-  const id = searchParams.get('id')
+export default function AdoptionDetails({
+  params,
+}: {
+  params: { id: string }
+}) {
+  const [isMounted, setIsMounted] = useState(false)
+  const [showModal, setShowModal] = useState(false)
 
+  const [animal, setAnimal] = useState<Animal | null>(null)
+  const { id } = useParams()
+  console.log(params)
   useEffect(() => {
+    console.log('ID do animal:', params.id) // Verifica o ID
+
     const fetchAnimal = async () => {
-      if (!id) return // Verifica se o ID é válido
+      if (!id) {
+        toast.error('ID do animal não encontrado.')
+        return
+      }
 
       try {
         const response = await api.get(`/animal/${id}`)
@@ -49,7 +62,7 @@ export default function AdoptionDetails() {
     }
 
     fetchAnimal()
-  }, [id]) // Mantém a dependência do ID
+  }, [id]) // O useEffect depende do ID
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -62,75 +75,89 @@ export default function AdoptionDetails() {
   if (!animal) return <p>Carregando...</p>
 
   return (
-    <section className="flex h-screen w-full flex-col items-center justify-center">
-      <div className="mx-auto flex max-w-[1400px] flex-col items-center">
-        <div className="grid w-full grid-cols-2 rounded-[10px] p-20">
-          <div className="flex flex-col items-center justify-center">
-            <Image
-              src={animal.photoAnimal}
-              className="rounded-[8px]"
-              alt={animal.name}
-              width={400}
-              height={400}
-            />
-          </div>
-
-          <div className="flex w-full flex-col text-left">
-            <div className="flex flex-col">
-              <span className="pb-1 text-2xl font-bold text-[#01377D]">
-                {animal.name}
-              </span>
-              <div className="flex flex-row gap-2 pb-4 text-sm text-[#4F4747]">
-                <span>{animal.specie}</span> <span>|</span>
-                <span>{animal.sex}</span> <span>|</span>
-                <span>{animal.animalSize}</span>
+    <>
+      <section className="flex h-screen w-full flex-col items-center justify-center">
+        <div className="mx-auto flex max-w-[1400px] flex-col items-center">
+          <div className="grid w-full grid-cols-2 items-center justify-center gap-10 rounded-[10px] p-20">
+            <div className="flex flex-col items-center justify-center">
+              <Image
+                src={'https://utfs.io/f/' + animal.photoAnimal}
+                className="rounded-[8px]"
+                alt={animal.name}
+                width={400}
+                height={400}
+              />
+            </div>
+            <div className="flex w-full flex-col text-left">
+              <div className="flex flex-col">
+                <span className="pb-1 text-2xl font-bold text-[#01377D]">
+                  {animal.name}
+                </span>
+                <div className="flex flex-row gap-2 pb-4 text-sm text-[#4F4747]">
+                  <span>{animal.specie}</span> <span>|</span>
+                  <span>{animal.sex}</span> <span>|</span>
+                  <span>{animal.animalSize}</span>
+                </div>
               </div>
-            </div>
-            <div className="flex flex-col gap-y-2 pb-4">
-              <span className="flex flex-row gap-2 text-sm text-[#4F4747]">
-                <MapPin className="text-[#7FD349]" size={20} />
-                Está em {animal.city}, {animal.state}
-              </span>
-              <span className="flex flex-row gap-2 text-sm text-[#4F4747]">
-                <FaUserAlt className="text-[#7FD349]" size={20} />
-                Publicado por{' '}
-                <span className="text-[#7FD349]">Fulano de Tal</span> em{' '}
-                {formatDate(animal.created_at)}
-              </span>
-            </div>
-            <Button className="my-5 w-full rounded-[10px] border bg-[#01377D] text-lg text-white hover:bg-[#01377d97]">
-              Entrar em contato
-            </Button>
-            <div className="pb-4">
-              <span className="text-xl font-bold text-[#7FD349]">
-                História do {animal.name}
-              </span>
-              <p className="mt-2 text-sm text-[#4F4747]">
-                {animal.description}
-              </p>
-            </div>
-            <div className="mb-10">
-              <span className="text-xl font-bold text-[#7FD349]">
-                Mais detalhes sobre {animal.name}
-              </span>
-              <div className="mt-2 flex flex-wrap gap-2">
-                <Badge className="rounded-[10px] bg-[#B3C3D8] p-2 text-[#01377D] hover:bg-[#B3C3D8]">
-                  {animal.vetCare}
-                </Badge>
-                <Badge className="rounded-[10px] bg-[#B3C3D8] p-2 text-[#01377D] hover:bg-[#B3C3D8]">
-                  {animal.sociableWith}
-                </Badge>
-                <Badge className="rounded-[10px] bg-[#B3C3D8] p-2 text-[#01377D] hover:bg-[#B3C3D8]">
-                  {animal.livesWellIn}
-                </Badge>
+              <div className="flex flex-col gap-y-2 pb-4">
+                <span className="flex flex-row gap-2 text-sm text-[#4F4747]">
+                  <MapPin className="text-[#7FD349]" size={20} />
+                  Está em {animal.city}, {animal.state}
+                </span>
+                <span className="flex flex-row gap-2 text-sm text-[#4F4747]">
+                  <FaUserAlt className="text-[#7FD349]" size={20} />
+                  Publicado por{' '}
+                  <span className="text-[#7FD349]">Fulano de Tal</span> em{' '}
+                  {formatDate(animal.created_at)}
+                </span>
               </div>
+              <Button
+                onClick={() => setShowModal(true)}
+                className="my-5 w-full rounded-[10px] border bg-[#01377D] text-lg text-white hover:bg-[#01377d97]"
+              >
+                Entrar em contato
+              </Button>
+              <div className="pb-4">
+                <span className="text-xl font-bold text-[#7FD349]">
+                  História do {animal.name}
+                </span>
+                <p className="mt-2 text-sm text-[#4F4747]">
+                  {animal.description}
+                </p>
+              </div>
+              <div className="mb-10">
+                <span className="text-xl font-bold text-[#7FD349]">
+                  Mais detalhes sobre {animal.name}
+                </span>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <Badge className="rounded-[10px] bg-[#B3C3D8] p-2 text-[#01377D] hover:bg-[#B3C3D8]">
+                    {animal.vetCare}
+                  </Badge>
+                  <Badge className="rounded-[10px] bg-[#B3C3D8] p-2 text-[#01377D] hover:bg-[#B3C3D8]">
+                    {animal.sociableWith}
+                  </Badge>
+                  <Badge className="rounded-[10px] bg-[#B3C3D8] p-2 text-[#01377D] hover:bg-[#B3C3D8]">
+                    {animal.livesWellIn}
+                  </Badge>
+                </div>
+              </div>
+              <Button
+                onClick={() => setShowModal(true)}
+                className="w-full rounded-[10px] border bg-[#01377D] text-lg text-white hover:bg-[#01377d97]"
+              >
+                Quero adotar
+              </Button>
             </div>
-            <Button className="w-full rounded-[10px] border bg-[#01377D] text-lg text-white hover:bg-[#01377d97]">
-              Quero adotar
-            </Button>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="max-w-xl border border-zinc-50 bg-white shadow-md">
+          <div className="min-h-[280px] w-full">
+            <ModalPet />
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
