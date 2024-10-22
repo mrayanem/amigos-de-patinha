@@ -6,6 +6,7 @@ type TAuth = {
   id: string
   email: string
   password: string
+  role: string
 }
 
 type TAuthResponse = {

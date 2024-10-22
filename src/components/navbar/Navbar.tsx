@@ -33,25 +33,28 @@ export function Navbar() {
     if (session && status === 'authenticated') {
       return (
         <div className="flex w-full flex-row items-center justify-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="flex h-auto w-full items-center justify-center self-center bg-transparent text-4xl font-medium hover:bg-transparent hover:text-[#01377db7] hover:shadow-md">
-                <div className="flex w-full items-center justify-center">
-                  <Settings size={24} className="text-[#01377D]" />
-                </div>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>Opções</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <Link href={'/users'}>
-                <DropdownMenuItem>Usuarios</DropdownMenuItem>
-              </Link>
-              <Link href={'/animals'}>
-                <DropdownMenuItem>Animais</DropdownMenuItem>
-              </Link>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          { session.user.role === "admin" &&
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="flex h-auto w-full items-center justify-center self-center bg-transparent text-4xl font-medium hover:bg-transparent hover:text-[#01377db7] hover:shadow-md">
+                  <div className="flex w-full items-center justify-center">
+                    <Settings size={24} className="text-[#01377D]" />
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Opções</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <Link href={'/users'}>
+                  <DropdownMenuItem>Usuarios</DropdownMenuItem>
+                </Link>
+                <Link href={'/animals'}>
+                  <DropdownMenuItem>Animais</DropdownMenuItem>
+                </Link>
+              </DropdownMenuContent>
+              </DropdownMenu>
+            }
           <DropdownMenu>
             <DropdownMenuTrigger className="rounded-full border-none bg-[#01377D] p-2 text-white">
               <User className="h-[25px] w-[25px] text-white" />
