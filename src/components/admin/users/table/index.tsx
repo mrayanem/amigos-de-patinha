@@ -57,21 +57,21 @@ export default function UsersTable() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const itemsPerPage = 3 // Alterado para 3 usuários por página
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await api.get('/users')
-        setUsers(response.data)
-        setFilteredUsers(response.data) // Inicialmente, todos os usuários são filtrados
-      } catch (error) {
-        console.error('Erro ao buscar usuários:', error)
-        toast.error('Erro ao buscar usuários.')
-      }
+  const fetchUsers = async () => {
+    try {
+      const response = await api.get('/users')
+      setUsers(response.data)
+      setFilteredUsers(response.data) // Inicialmente, todos os usuários são filtrados
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error)
+      toast.error('Erro ao buscar usuários.')
     }
+  }
+
+  useEffect(() => {
     fetchUsers()
   }, [])
 
-  console.log(users)
 
   useEffect(() => {
     const filtered = users.filter((user) => {

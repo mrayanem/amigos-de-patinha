@@ -1,4 +1,4 @@
-import { api } from '@/client'
+import { apiServer } from '@/client/server'
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
@@ -30,7 +30,7 @@ export const nextAuthOptions: NextAuthOptions = {
         const { email, password } = credentials as TAuth
 
         try {
-          const response = await api.post<TAuthResponse>('/auth', {
+          const response = await apiServer.post<TAuthResponse>('/auth', {
             email,
             password,
           })

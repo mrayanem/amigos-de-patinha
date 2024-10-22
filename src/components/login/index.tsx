@@ -28,18 +28,6 @@ const formSchema = z.object({
 export default function SectionLogin() {
   const { isLoading } = useRegister()
   const router = useRouter()
-  const { data: session } = useSession()
-
-  useEffect(() => {
-    if (session?.user) {
-      const userRole = session.user.role // Obter o papel do usuário
-      if (userRole === 'admin') {
-        router.replace('/users')
-      } else if (userRole === 'client') {
-        router.replace('/')
-      }
-    }
-  }, [session, router])
 
   const [isPending, startTransition] = useTransition()
 
@@ -59,16 +47,7 @@ export default function SectionLogin() {
       } else {
         toast.success('Usuário logado com sucesso')
         form.reset()
-
-        // Re-fetch the session to get updated user data
-        const newSession = await useSession() // Obter dados atualizados da sessão
-        const userRole = newSession.data?.user?.role // Verificar o papel do usuário
-
-        if (userRole === 'admin') {
-          router.replace('/users')
-        } else if (userRole === 'client') {
-          router.replace('/')
-        }
+        router.replace('/')
       }
     })
   }

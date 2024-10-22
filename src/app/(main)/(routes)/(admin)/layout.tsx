@@ -8,6 +8,8 @@ import { Sidebar } from '@/components/Sidebar'
 import { getServerSession } from 'next-auth'
 import { nextAuthOptions } from '@/app/api/auth/authOptions'
 import { redirect } from 'next/navigation'
+import { Navbar } from '@/components/navbar/Navbar'
+import Footer from '@/components/footer/Footer'
 
 export const metadata: Metadata = {
   title: 'Amigos de Patinha',
@@ -32,11 +34,10 @@ export default async function RootLayout({
         className="bg-[#F4F9FF]"
         style={{ fontFamily: 'Poppins, sans-serif' }}
       >
-        <NextAuthSessionProvider session={session}>
-          <ReactQueryProvider>
-            <main className="">{children}</main>
-          </ReactQueryProvider>
-        </NextAuthSessionProvider>
+
+          <Navbar/>
+            {children}
+          <Footer/>
       </div>
     </>
   )
