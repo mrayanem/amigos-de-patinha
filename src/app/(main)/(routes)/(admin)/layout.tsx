@@ -1,10 +1,5 @@
 import { Metadata } from 'next'
 import '@fontsource/poppins'
-import {
-  NextAuthSessionProvider,
-  ReactQueryProvider,
-} from '../../../../../providers'
-import { Sidebar } from '@/components/Sidebar'
 import { getServerSession } from 'next-auth'
 import { nextAuthOptions } from '@/app/api/auth/authOptions'
 import { redirect } from 'next/navigation'

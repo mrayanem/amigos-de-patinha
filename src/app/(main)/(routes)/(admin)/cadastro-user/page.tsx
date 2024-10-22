@@ -1,10 +1,10 @@
-import SectionCadastroAdmin from '@/components/admin/cadastro-admin'
+import SectionCadastroUsuario from '@/components/admin/cadastro-usuario'
 import React from 'react'
 
-export default function CadastroAdmin() {
+export default function CadastroUsuario() {
   return (
     <>
-      <SectionCadastroAdmin />
+      <SectionCadastroUsuario />
     </>
   )
 }

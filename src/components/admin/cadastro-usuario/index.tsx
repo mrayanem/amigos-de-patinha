@@ -6,14 +6,16 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Loader2, LockKeyhole, Mail, Phone } from 'lucide-react'
 import { toast } from 'react-toastify'
-import { useRouter } from 'next/navigation'
-import React from 'react'
+import { redirect, useRouter } from 'next/navigation'
+import React, { useEffect } from 'react'
 import { Form, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useUsers } from '@/client/auth/useUsers'
 import type { MaskitoOptions } from '@maskito/core'
 import { useMaskito } from '@maskito/react'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
 
 const formSchema = z
   .object({
@@ -24,16 +26,16 @@ const formSchema = z
     email: z
       .string({ required_error: 'Insira seu email' })
       .email('Insira um email válido'),
-    password: z.string({ required_error: 'Insira uma senha' }),
-    confirmPassword: z.string({ required_error: 'Confirme sua senha' }),
+    // password: z.string({ required_error: 'Insira uma senha' }),
+    // confirmPassword: z.string({ required_error: 'Confirme sua senha' }),
     role: z.enum(['client', 'admin'], {
       required_error: 'Selecione uma função',
     }),
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'As senhas não correspondem',
-    path: ['confirmPassword'],
-  })
+  // .refine((data) => data.password === data.confirmPassword, {
+  //   message: 'As senhas não correspondem',
+  //   path: ['confirmPassword'],
+  // })
 
 const digitsOnlyMask: MaskitoOptions = {
   mask: [
@@ -55,7 +57,7 @@ const digitsOnlyMask: MaskitoOptions = {
   ],
 }
 
-export default function SectionCadastroAdmin() {
+export default function SectionCadastroUsuario() {
   const router = useRouter()
   const { createUser, isLoading } = useUsers()
   const form = useForm<z.infer<typeof formSchema>>({
@@ -63,13 +65,14 @@ export default function SectionCadastroAdmin() {
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    createUser(values, {
+    const data = { ...values, password: "amigosdapatinha@2024" }
+    createUser(data, {
       onSuccess: () => {
-        toast.success('Cadastro com sucesso! Você pode fazer login agora')
-        router.replace('/')
+        toast.success('Usúario cadastrado com sucesso!')
+        setTimeout(() => router.push('/users'), 500)
       },
       onError: () => {
-        toast.error('Erro ao criar administrador')
+        toast.error('Erro ao criar usuario')
       },
     })
   }
@@ -83,7 +86,7 @@ export default function SectionCadastroAdmin() {
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="mb-[50px] flex flex-col items-center justify-center">
                   <h2 className="text-4xl font-bold text-[#01377D]">
-                    Cadastre um admin
+                    Cadastre um usuario
                   </h2>
                   <span className="text-md font-semibold text-[#A2A7A9]">
                     Necessitamos dos seus dados para prosseguir
@@ -114,9 +117,9 @@ export default function SectionCadastroAdmin() {
                       name="telephone"
                       render={({ field }) => {
                         const { ref, ...rest } = field
-                        const maskRef = useMaskito({
-                          options: digitsOnlyMask,
-                        })
+                        // const maskRef = useMaskito({
+                        //   options: digitsOnlyMask,
+                        // })
                         return (
                           <div className="relative w-full">
                             <span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -127,7 +130,7 @@ export default function SectionCadastroAdmin() {
                               id="telephone"
                               placeholder="Telefone"
                               className="rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
-                              ref={maskRef}
+                              //ref={maskRef}
                               {...rest}
                             />
                           </div>
@@ -194,6 +197,44 @@ export default function SectionCadastroAdmin() {
                     />
                   </div>
                   <div className="w-full">
+                    <Label className="text-md mb-2 font-semibold text-[#A2A7A9]">
+                      Selecione seu papel:
+                    </Label>
+                    <RadioGroup
+                      defaultValue="client"
+                      onValueChange={(value) => form.setValue('role', value as any)}
+                    >
+                      <div className="flex items-center space-x-4 my-3">
+                        <div className="flex items-center">
+                          <RadioGroupItem
+                            value="client"
+                            id="client"
+                            className="border-zinc-500 text-[#A2A7A9]"
+                          />
+                          <Label
+                            htmlFor="client"
+                            className="ml-2 text-[#A2A7A9]"
+                          >
+                            Cliente
+                          </Label>
+                        </div>
+                        <div className="flex items-center">
+                          <RadioGroupItem
+                            value="admin"
+                            id="admin"
+                            className="border-zinc-500 text-[#A2A7A9]"
+                          />
+                          <Label
+                            htmlFor="admin"
+                            className="ml-2 text-[#A2A7A9]"
+                          >
+                            Administrador
+                          </Label>
+                        </div>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                  {/*<div className="w-full">
                     <FormField
                       control={form.control}
                       name="password"
@@ -232,11 +273,12 @@ export default function SectionCadastroAdmin() {
                         </div>
                       )}
                     />
-                  </div>
+                  </div>*/}
                 </div>
                 <div className="mt-5 flex flex-col items-center">
                   <Button
-                    type="submit"
+                    //type="submit"
+                    onClick={() => { console.log(form.formState.errors); form.handleSubmit(onSubmit)}}
                     className="text-md h-[45px] w-full rounded-[20px] bg-[#01377D] font-bold text-white shadow-sm hover:bg-[#012452] md:w-[280px]"
                   >
                     {isLoading ? (

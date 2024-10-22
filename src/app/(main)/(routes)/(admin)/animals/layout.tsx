@@ -26,7 +26,7 @@ export default async function RootLayout({
     <div className="bg-[#F4F9FF]" style={{ fontFamily: 'Poppins, sans-serif' }}>
       <div className="grid-app grid min-h-screen">
         <Sidebar />
-        <main>{children}</main>
+        {children}
       </div>
     </div>
   )

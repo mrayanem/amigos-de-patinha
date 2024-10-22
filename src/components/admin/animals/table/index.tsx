@@ -30,7 +30,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination'
 import { api } from '@/client'
-import { toast, ToastContainer } from 'react-toastify'
+import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { format } from 'date-fns'
 import {
@@ -235,7 +235,6 @@ export default function AnimalsTable() {
           </PaginationContent>
         </Pagination>
       </div>
-      <ToastContainer />
     </>
   )
 }
