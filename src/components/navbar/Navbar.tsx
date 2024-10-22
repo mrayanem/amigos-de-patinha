@@ -4,6 +4,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
@@ -15,7 +16,7 @@ import { Backlinks } from '@/constants'
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import { Menu, User } from 'lucide-react'
+import { Menu, Settings, User } from 'lucide-react'
 import { useSession, signOut } from 'next-auth/react'
 // import { toast } from 'react-toastify'
 
@@ -31,31 +32,54 @@ export function Navbar() {
   const renderUserMenu = () => {
     if (session && status === 'authenticated') {
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger className="rounded-full border-none bg-[#01377D] p-2 text-white">
-            <User className="h-[25px] w-[25px] text-white" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem>
-              <Link href="/profile" passHref>
-                Conta
+        <div className="flex w-full flex-row items-center justify-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="flex h-auto w-full items-center justify-center self-center bg-transparent text-4xl font-medium hover:bg-transparent hover:text-[#01377db7] hover:shadow-md">
+                <div className="flex w-full items-center justify-center">
+                  <Settings size={24} className="text-[#01377D]" />
+                </div>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Opções</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <Link href={'/users'}>
+                <DropdownMenuItem>Usuarios</DropdownMenuItem>
               </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link href="/profile-details" passHref>
-                Editar perfil
+              <Link href={'/animals'}>
+                <DropdownMenuItem>Animais</DropdownMenuItem>
               </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Link href="/cadastro-pet" passHref>
-                Cadastrar animal
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => signOut()}>Sair</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="rounded-full border-none bg-[#01377D] p-2 text-white">
+              <User className="h-[25px] w-[25px] text-white" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>
+                <Link href="/profile" passHref>
+                  Conta
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/profile-details" passHref>
+                  Editar perfil
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link href="/cadastro-pet" passHref>
+                  Cadastrar animal
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => signOut()}>
+                Sair
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       )
     } else {
       return (

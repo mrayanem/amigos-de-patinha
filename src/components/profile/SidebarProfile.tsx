@@ -82,17 +82,15 @@ export function NavProfile() {
             <div className="flex h-auto w-full items-center justify-center self-center bg-transparent pb-5 text-lg font-medium hover:bg-transparent">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button className="flex h-auto w-full items-center justify-center self-center bg-transparent pb-5 text-lg font-medium hover:bg-transparent hover:text-[#01377db7] hover:shadow-md">
+                  <Button className="mb-5 flex h-auto w-full items-center justify-center self-center bg-transparent text-lg font-medium hover:bg-transparent hover:text-[#01377db7] hover:shadow-md">
                     <Settings size={18} className="text-[#01377D]" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuLabel>Opções</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <Link href={'/'}>        
-                  <DropdownMenuItem>
-                    Home
-                  </DropdownMenuItem>
+                  <Link href={'/'}>
+                    <DropdownMenuItem>Home</DropdownMenuItem>
                   </Link>
                   <DropdownMenuItem onClick={handleDeactivateAccount}>
                     Desativar conta
