@@ -6,14 +6,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Loader2, LockKeyhole, Mail, Phone } from 'lucide-react'
 import { toast } from 'react-toastify'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useRouter } from 'next/navigation'
 import React from 'react'
-import { Label } from '@radix-ui/react-label'
 import { Form, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useUsers } from '@/client/auth/useUsers'
+import type { MaskitoOptions } from '@maskito/core'
+import { useMaskito } from '@maskito/react'
 
 const formSchema = z
   .object({
@@ -34,6 +34,26 @@ const formSchema = z
     message: 'As senhas não correspondem',
     path: ['confirmPassword'],
   })
+
+const digitsOnlyMask: MaskitoOptions = {
+  mask: [
+    '(',
+    /\d/,
+    /\d/,
+    ')',
+    ' ',
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/,
+    '-',
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/,
+  ],
+}
 
 export default function SectionCadastroAdmin() {
   const router = useRouter()
@@ -92,20 +112,27 @@ export default function SectionCadastroAdmin() {
                     <FormField
                       control={form.control}
                       name="telephone"
-                      render={({ field }) => (
-                        <div className="relative w-full">
-                          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <Phone className="text-[#A2A7A9]" size={17} />
-                          </span>
-                          <Input
-                            type="text"
-                            id="telephone"
-                            placeholder="Telefone"
-                            className="rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
-                            {...field}
-                          />
-                        </div>
-                      )}
+                      render={({ field }) => {
+                        const { ref, ...rest } = field
+                        const maskRef = useMaskito({
+                          options: digitsOnlyMask,
+                        })
+                        return (
+                          <div className="relative w-full">
+                            <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                              <Phone className="text-[#A2A7A9]" size={17} />
+                            </span>
+                            <Input
+                              type="text"
+                              id="telephone"
+                              placeholder="Telefone"
+                              className="rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
+                              ref={maskRef}
+                              {...rest}
+                            />
+                          </div>
+                        )
+                      }}
                     />
                   </div>
                   <div className="flex w-full flex-row gap-2">

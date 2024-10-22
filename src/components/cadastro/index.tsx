@@ -11,6 +11,8 @@ import { Loader2, LockKeyhole, Mail, Phone } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { useRegister } from '@/client/auth'
 import { useRouter } from 'next/navigation'
+import type { MaskitoOptions } from '@maskito/core'
+import { useMaskito } from '@maskito/react'
 
 // Define o esquema de validação com confirmação de senha
 const formSchema = z
@@ -30,9 +32,28 @@ const formSchema = z
     path: ['confirmPassword'],
   })
 
+const digitsOnlyMask: MaskitoOptions = {
+  mask: [
+    '(',
+    /\d/,
+    /\d/,
+    ')',
+    ' ',
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/,
+    '-',
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/,
+  ],
+}
+
 export default function SectionCadastro() {
   const router = useRouter()
-  // const [isPending] = useTransition()
   const { createUser, isLoading } = useRegister()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,7 +75,7 @@ export default function SectionCadastro() {
     <section className="bg-[#f7f4f4] px-4 py-10 md:py-[110px]">
       <div className="mx-auto flex max-w-[1000px] flex-col items-center">
         <div className="flex h-auto w-full flex-col items-center justify-center self-center rounded-[20px] bg-white shadow-2xl md:h-[530px]">
-          <div className="flex-flex-col h-auto w-full max-w-[500px] items-center justify-center self-center">
+          <div className="flex h-auto w-full max-w-[500px] flex-col items-center justify-center self-center">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="mb-[50px] flex flex-col items-center justify-center">
@@ -88,20 +109,27 @@ export default function SectionCadastro() {
                     <FormField
                       control={form.control}
                       name="telephone"
-                      render={({ field }) => (
-                        <div className="relative w-full">
-                          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <Phone className="text-[#A2A7A9]" size={17} />
-                          </span>
-                          <Input
-                            type="text"
-                            id="telephone"
-                            placeholder="Telefone"
-                            className="rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
-                            {...field}
-                          />
-                        </div>
-                      )}
+                      render={({ field }) => {
+                        const { ref, ...rest } = field
+                        const maskRef = useMaskito({
+                          options: digitsOnlyMask,
+                        })
+                        return (
+                          <div className="relative w-full">
+                            <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                              <Phone className="text-[#A2A7A9]" size={17} />
+                            </span>
+                            <Input
+                              type="text"
+                              id="telephone"
+                              placeholder="Telefone"
+                              className="rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
+                              ref={maskRef}
+                              {...rest}
+                            />
+                          </div>
+                        )
+                      }}
                     />
                   </div>
                   <div className="flex w-full flex-row gap-2">
@@ -210,7 +238,7 @@ export default function SectionCadastro() {
                       {isLoading ? (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       ) : (
-                        'Criar conta'
+                        'Cadastrar'
                       )}
                     </Button>
                   </div>
