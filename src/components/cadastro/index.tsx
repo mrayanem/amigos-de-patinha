@@ -11,28 +11,42 @@ import { Loader2, LockKeyhole, Mail, Phone } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { useRegister } from '@/client/auth'
 import { useRouter } from 'next/navigation'
-import type { MaskitoOptions } from '@maskito/core'
+import { useRef } from 'react'
 import { useMaskito } from '@maskito/react'
 
-// Define o esquema de validação com confirmação de senha
+// Função personalizada para combinar refs
+const mergeRefs =
+  (...refs) =>
+  (value) => {
+    refs.forEach((ref) => {
+      if (typeof ref === 'function') {
+        ref(value)
+      } else if (ref != null) {
+        ref.current = value
+      }
+    })
+  }
+
+// Esquema de validação com zod
 const formSchema = z
   .object({
-    name: z.string({ required_error: 'Insira seu nome' }),
-    telephone: z.string({ required_error: 'Insira seu telefone' }),
-    city: z.string({ required_error: 'Insira sua cidade' }),
-    state: z.string({ required_error: 'Insira seu estado' }),
+    name: z.string().nonempty('Insira seu nome'),
+    telephone: z.string().nonempty('Insira seu telefone'),
+    city: z.string().nonempty('Insira sua cidade'),
+    state: z.string().nonempty('Insira seu estado'),
     email: z
-      .string({ required_error: 'Insira seu email' })
+      .string()
+      .nonempty('Insira seu email')
       .email('Insira um email válido'),
-    password: z.string({ required_error: 'Insira uma senha' }),
-    confirmPassword: z.string({ required_error: 'Confirme sua senha' }),
+    password: z.string().nonempty('Insira uma senha'),
+    confirmPassword: z.string().nonempty('Confirme sua senha'),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'As senhas não correspondem',
     path: ['confirmPassword'],
   })
 
-const digitsOnlyMask: MaskitoOptions = {
+const digitsOnlyMask = {
   mask: [
     '(',
     /\d/,
@@ -55,20 +69,21 @@ const digitsOnlyMask: MaskitoOptions = {
 export default function SectionCadastro() {
   const router = useRouter()
   const { createUser, isLoading } = useRegister()
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
   })
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    createUser(values, {
-      onSuccess: () => {
-        toast.success('Cadastro com sucesso! Você pode fazer login agora')
-        router.replace('/')
-      },
-      onError: () => {
-        toast.error('Erro ao criar usuário')
-      },
-    })
+  const onSubmit = async (values) => {
+    console.log('Valores do formulário:', values)
+    try {
+      const response = await createUser(values)
+      console.log('Resposta do servidor:', response)
+      toast.success('Cadastro com sucesso! Você pode fazer login agora')
+      router.replace('/')
+    } catch (error) {
+      console.error('Erro ao criar usuário:', error)
+      toast.error('Erro ao criar usuário')
+    }
   }
 
   return (
@@ -111,9 +126,8 @@ export default function SectionCadastro() {
                       name="telephone"
                       render={({ field }) => {
                         const { ref, ...rest } = field
-                        const maskRef = useMaskito({
-                          options: digitsOnlyMask,
-                        })
+                        const maskRef = useRef(null)
+                        useMaskito({ target: maskRef, options: digitsOnlyMask })
                         return (
                           <div className="relative w-full">
                             <span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -124,7 +138,7 @@ export default function SectionCadastro() {
                               id="telephone"
                               placeholder="Telefone"
                               className="rounded-[5px] border border-none bg-[#F5F5F5] pl-10 font-bold text-[#A2A7A9]"
-                              ref={maskRef}
+                              ref={mergeRefs(maskRef, ref)} // Combina refs manualmente
                               {...rest}
                             />
                           </div>
@@ -236,7 +250,7 @@ export default function SectionCadastro() {
                       className="h-[50px] w-full rounded-[20px] bg-[#01377D] font-bold text-white shadow-sm hover:bg-[#012452] md:w-[280px]"
                     >
                       {isLoading ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="animate-spin" />
                       ) : (
                         'Cadastrar'
                       )}
