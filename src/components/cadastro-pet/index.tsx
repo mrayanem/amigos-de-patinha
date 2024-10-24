@@ -75,16 +75,15 @@ export default function SectionCadastroPet() {
     resolver: zodResolver(formSchema),
   })
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    createAnimal(values, {
-      onSuccess: () => {
-        toast.success('Cadastro realizado com sucesso!')
-        router.replace('/')
-      },
-      onError: () => {
-        toast.error('Erro ao cadastrar o animal.')
-      },
-    })
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log('Valores do formulário:', values)
+    try {
+      await createAnimal(values)
+      toast.success('Cadastro realizado com sucesso!')
+      router.replace('/')
+    } catch (error) {
+      toast.error('Erro ao cadastrar o animal.')
+    }
   }
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {

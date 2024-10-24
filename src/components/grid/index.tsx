@@ -42,7 +42,7 @@ export default function Grid() {
               asChild={true}
               className="text-md flex w-full items-center rounded-[10px] border-2 border-[#01377D] bg-transparent font-medium text-[#01377D] hover:border-[#084390] hover:bg-slate-100 hover:text-[#084390] md:w-[145px]"
             >
-              <a href="#" target="" rel="noopener noreferrer">
+              <a href="/adoption" target="" rel="noopener noreferrer">
                 Adoção <ChevronRight />
               </a>
             </Button>

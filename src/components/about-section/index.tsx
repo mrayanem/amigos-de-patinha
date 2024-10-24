@@ -25,9 +25,14 @@ export default function AboutSection() {
               <h2 className="font-bold md:text-[60px]">
                 Deseja saber mais sobre nós?
               </h2>
-              <Button className="text-md flex w-full items-center justify-between rounded-[10px] border-2 border-[#01377D] bg-transparent font-medium text-[#01377D] hover:border-[#084390a5] hover:text-[#084390a5] md:w-[150px]">
-                Sobre nós
-                <ChevronRight />
+              <Button
+                asChild={true}
+                className="text-md flex w-full items-center justify-between rounded-[10px] border-2 border-[#01377D] bg-transparent font-medium text-[#01377D] hover:border-[#084390a5] hover:bg-transparent hover:text-[#084390a5] md:w-[150px]"
+              >
+                <a href="/about" target="" rel="noopener noreferrer">
+                  Sobre nós
+                  <ChevronRight />
+                </a>
               </Button>
             </div>
           </div>

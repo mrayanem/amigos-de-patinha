@@ -29,10 +29,9 @@ export default async function RootLayout({
         className="bg-[#F4F9FF]"
         style={{ fontFamily: 'Poppins, sans-serif' }}
       >
-
-          <Navbar/>
-            {children}
-          <Footer/>
+        {/* <Navbar /> */}
+        {children}
+        {/* <Footer /> */}
       </div>
     </>
   )

@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { Button } from '../ui/button'
 import { useEffect, useState } from 'react'
 import { api } from '@/client'
+import Link from 'next/link'
 
 interface Animal {
   id: string
@@ -21,7 +22,9 @@ export default function PetsHome() {
     const fetchAnimals = async () => {
       try {
         const response = await api.get('/animals')
-        const filteredAnimals = response.data.filter((animal: Animal) => animal.status === true)
+        const filteredAnimals = response.data.filter(
+          (animal: Animal) => animal.status === true,
+        )
         setAnimals(filteredAnimals)
       } catch (error) {
         console.error('Erro ao buscar animais:', error)
@@ -67,9 +70,11 @@ export default function PetsHome() {
             ))}
           </div>
           <div className="flex flex-col items-center justify-center">
-            <Button className="h-[50px] w-[190px] rounded-[17px] bg-[#01377D] text-xl font-medium text-white">
-              Ver mais
-            </Button>
+            <Link href={'/adoption'}>
+              <Button className="h-[50px] w-[190px] rounded-[17px] bg-[#01377D] text-xl font-medium text-white hover:bg-[#01377dcd]">
+                Ver mais
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

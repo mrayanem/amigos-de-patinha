@@ -42,8 +42,8 @@ interface Animal {
 }
 
 const CircleLoader = () => (
-  <div className="animate-spin rounded-full border-4 border-t-4 border-[#01377D] w-6 h-6"></div>
-);
+  <div className="h-6 w-6 animate-spin rounded-full border-4 border-t-4 border-[#01377D]"></div>
+)
 
 export default function AdoptionSection() {
   const [animals, setAnimals] = useState<Animal[]>([])
@@ -60,7 +60,9 @@ export default function AdoptionSection() {
     const fetchAnimals = async () => {
       try {
         const response = await api.get('/animals')
-        const filteredAnimals = response.data.filter((animal: Animal) => animal.status === true)
+        const filteredAnimals = response.data.filter(
+          (animal: Animal) => animal.status === true,
+        )
         setAnimals(filteredAnimals)
       } catch (error) {
         console.error('Erro ao buscar animais:', error)
@@ -72,27 +74,32 @@ export default function AdoptionSection() {
   const indexOfLastAnimal = currentPage * animalsPerPage
   const indexOfFirstAnimal = indexOfLastAnimal - animalsPerPage
 
-  const filteredAnimals = animals.filter(animal => {
-    const matchesSpecie = selectedSpecie ? animal.specie === selectedSpecie : true
+  const filteredAnimals = animals.filter((animal) => {
+    const matchesSpecie = selectedSpecie
+      ? animal.specie === selectedSpecie
+      : true
     const matchesSex = selectedSex ? animal.sex === selectedSex : true
     const matchesSize = selectedSize ? animal.animalSize === selectedSize : true
     return matchesSpecie && matchesSex && matchesSize
   })
 
-  const currentAnimals = filteredAnimals.slice(indexOfFirstAnimal, indexOfLastAnimal)
+  const currentAnimals = filteredAnimals.slice(
+    indexOfFirstAnimal,
+    indexOfLastAnimal,
+  )
   const totalPages = Math.ceil(filteredAnimals.length / animalsPerPage)
 
   const handleSearch = () => {
     setCurrentPage(1)
-    setIsLoading(true) 
+    setIsLoading(true)
     setTimeout(() => {
       setIsLoading(false)
-    }, 1000); 
+    }, 1000)
   }
 
   return (
-    <section className="flex h-screen w-full flex-col">
-      <div className="mx-auto flex w-full max-w-[1400px] flex-col justify-center px-5">
+    <section className="flex h-auto w-full flex-col py-10">
+      <div className="mx-auto flex h-full w-full max-w-[1400px] flex-col justify-center px-5">
         <div className="flex flex-col items-start justify-start py-10 text-left">
           <h1 className="text-2xl font-bold text-[#01377D]">
             Encontre seu melhor amigo aqui!
@@ -143,11 +150,11 @@ export default function AdoptionSection() {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Button 
-            onClick={handleSearch} 
-            className="w-full bg-[#01377D] font-bold text-white shadow-sm hover:bg-[#012452] transition-transform"
+          <Button
+            onClick={handleSearch}
+            className="w-full bg-[#01377D] font-bold text-white shadow-sm transition-transform hover:bg-[#012452]"
           >
-            {isLoading ? <CircleLoader/> : 'Pesquisar'}
+            {isLoading ? <CircleLoader /> : 'Pesquisar'}
           </Button>
         </div>
 

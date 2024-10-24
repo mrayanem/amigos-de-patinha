@@ -76,7 +76,7 @@ export default function Hero() {
               asChild={true}
               className="text-md w-full rounded-[10px] bg-[#01377D] font-medium text-white hover:bg-[#084390] md:w-[336px]"
             >
-              <a href="/" target="" rel="noopener noreferrer">
+              <a href="/adoption" target="" rel="noopener noreferrer">
                 Quero adotar
               </a>
             </Button>
@@ -84,7 +84,7 @@ export default function Hero() {
               asChild={true}
               className="text-md w-full rounded-[10px] border-2 border-[#01377D] bg-transparent font-medium text-[#01377D] hover:border-[#084390] hover:bg-slate-100 hover:text-[#084390] md:w-[336px]"
             >
-              <a href="/CadastroPet" target="" rel="noopener noreferrer">
+              <a href="/cadastro" target="" rel="noopener noreferrer">
                 Quero divulgar um animal
               </a>
             </Button>

@@ -106,9 +106,7 @@ export default function AdoptionDetails({
                 </span>
                 <span className="flex flex-row gap-2 text-sm text-[#4F4747]">
                   <FaUserAlt className="text-[#7FD349]" size={20} />
-                  Publicado por{' '}
-                  <span className="text-[#7FD349]">Fulano de Tal</span> em{' '}
-                  {formatDate(animal.created_at)}
+                  Publicado em {formatDate(animal.created_at)}
                 </span>
               </div>
               <Button
